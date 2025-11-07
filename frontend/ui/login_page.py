@@ -1,7 +1,10 @@
 import flet as ft
+from frontend.ui.dashboard_page import dashboard
+from frontend.ui.create_account import create_account
+
 
 def main(page: ft.Page):
-    page.title = "Login - Rede de Trocas"
+    page.title = "Login"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.bgcolor = "#f5f5f5"
@@ -41,11 +44,21 @@ def main(page: ft.Page):
         on_click=login_click,
     )
 
+    # Create account link
+    def go_to_create_account(e):
+        page.clean()
+        create_account(page)
+
+    create_account_link = ft.TextButton(
+        "Criar uma conta",
+        on_click=go_to_create_account,
+    )
+
     # Central card
     login_card = ft.Card(
         content=ft.Container(
             content=ft.Column(
-                [logo, email, password, login_btn],
+                [logo, email, password, login_btn, create_account_link],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=20,
@@ -58,29 +71,5 @@ def main(page: ft.Page):
     page.add(login_card)
 
 
-def dashboard(page: ft.Page):
-    page.title = "Dashboard - Rede de Trocas"
-    page.bgcolor = "white"
-
-    # App bar
-    appbar = ft.AppBar(
-        title=ft.Text("Dashboard"),
-        bgcolor="#4CAF50",
-        color="white",
-    )
-
-    # Dashboard content
-    welcome = ft.Text("Bem-vindo à Rede de Trocas!", size=24, weight=ft.FontWeight.BOLD)
-    feed = ft.ListView(
-        controls=[
-            ft.ListTile(title=ft.Text("Item 1 - Bicicleta usada")),
-            ft.ListTile(title=ft.Text("Serviço - Aula de violão")),
-            ft.ListTile(title=ft.Text("Item 2 - Notebook antigo")),
-        ],
-        expand=True,
-    )
-
-    page.add(appbar, ft.Column([welcome, feed], spacing=20, expand=True))
-
-
-ft.app(target=main)
+if __name__ == "__main__":
+    ft.app(target=main)

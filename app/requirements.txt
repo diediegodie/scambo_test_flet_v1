@@ -1,0 +1,7 @@
+# requirements.txt - add the libraries your project uses here
+# After installing packages locally you can update this file with:
+# pip freeze > requirements.txt
+
+---
+
+flet

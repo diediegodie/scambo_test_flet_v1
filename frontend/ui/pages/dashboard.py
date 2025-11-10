@@ -1,7 +1,8 @@
 import flet as ft
-from flet import padding as pd
 from ..widgets.new_post_dialog import open_new_post_dialog
 from ..widgets.post_card import PostCard
+from ..widgets.app_bar import create_app_bar
+from ..widgets.nav_bar import create_nav_bar
 from mock.posts import get_mock_posts
 
 
@@ -11,22 +12,6 @@ def dashboard(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.START
     page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
     page.padding = 0
-
-    # Navigation handler for bottom bar
-    def on_nav_change(e):
-        selected_index = e.control.selected_index
-
-        if selected_index == 0:  # Início
-            page.clean()
-            dashboard(page)
-        elif selected_index == 1:  # Novo
-            # Open new post dialog directly without navigation
-            open_new_post_dialog(page)
-        elif selected_index == 2:  # Perfil
-            from .perfil import perfil
-
-            page.clean()
-            perfil(page)
 
     # Get sample feed data from mock module (easy to swap for real API later)
     mock_posts = get_mock_posts()
@@ -59,44 +44,9 @@ def dashboard(page: ft.Page):
         auto_scroll=False,
     )
 
-    # Action buttons row
-    action_buttons = ft.Row(
-        [
-            ft.IconButton(
-                icon=ft.Icons.SEARCH,
-                icon_color="#4CAF50",
-                icon_size=28,
-                tooltip="Buscar",
-            ),
-            ft.IconButton(
-                icon=ft.Icons.NOTIFICATIONS,
-                icon_color="#4CAF50",
-                icon_size=28,
-                tooltip="Notificações",
-            ),
-        ],
-        alignment=ft.MainAxisAlignment.CENTER,
-        spacing=20,
-    )
-    top_bar = ft.Container(
-        content=ft.Row([
-            ft.Container(width=450, content=action_buttons, alignment=ft.alignment.center)
-        ], alignment=ft.MainAxisAlignment.CENTER),
-        padding=pd.only(top=8, left=0, right=0, bottom=4),
-    )
-
-    # Footer navigation bar
-    nav = ft.NavigationBar(
-        selected_index=0,
-        on_change=on_nav_change,
-        destinations=[
-            ft.NavigationBarDestination(icon=ft.Icons.HOME, label="Início"),
-            ft.NavigationBarDestination(icon=ft.Icons.ADD_BOX, label="Novo"),
-            ft.NavigationBarDestination(icon=ft.Icons.PERSON, label="Perfil"),
-        ],
-        bgcolor="#ffffff",
-        indicator_color="#4CAF50",
-    )
+    # Get reusable components
+    top_bar = create_app_bar()
+    nav = create_nav_bar(page, selected_index=0)
 
     # Main layout: top actions, expandable feed, bottom navigation
     page.add(

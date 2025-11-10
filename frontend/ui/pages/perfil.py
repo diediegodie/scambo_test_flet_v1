@@ -5,60 +5,140 @@
 
 import flet as ft
 from ..widgets.new_post_dialog import open_new_post_dialog
+from ..widgets.app_bar import create_app_bar
+from ..widgets.nav_bar import create_nav_bar
 from mock.user import get_current_user
+from mock.posts import count_user_posts
 
 
 def perfil(page: ft.Page):
-    """Minimalistic user profile page with avatar and new post button."""
+    """Professional user profile page with avatar, bio, stats, and actions."""
     page.title = "Perfil - Scambo"
     page.bgcolor = "#f5f5f5"
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.vertical_alignment = ft.MainAxisAlignment.START
+    page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
     page.padding = 0
-
-    # Navigation handler for bottom bar
-    def on_nav_change(e):
-        selected_index = e.control.selected_index
-
-        if selected_index == 0:  # Início
-            from .dashboard import dashboard
-
-            page.clean()
-            dashboard(page)
-        elif selected_index == 1:  # Novo
-            # Open new post dialog directly
-            open_new_post_dialog(page)
-        elif selected_index == 2:  # Perfil
-            page.clean()
-            perfil(page)
 
     # Get current user data from mock module (easy to swap for real API later)
     user = get_current_user()
+    user_posts_count = count_user_posts(user["name"])
 
-    # Profile header with user info
-    profile_content = ft.Column(
+    # Profile header with avatar and user info
+    profile_header = ft.Column(
         [
             ft.CircleAvatar(
                 bgcolor=user["avatar_bg"],
                 content=ft.Text(
-                    user["avatar_text"], color="white", size=40, weight=ft.FontWeight.BOLD
+                    user["avatar_text"],
+                    color="white",
+                    size=40,
+                    weight=ft.FontWeight.BOLD,
                 ),
                 radius=50,
             ),
             ft.Text(
                 user["name"],
-                size=24,
+                size=28,
                 weight=ft.FontWeight.BOLD,
                 color="#333333",
             ),
             ft.Text(
                 user["email"],
                 size=14,
-                color="#666666",
+                color="#777777",
+            ),
+            # Bio section
+            ft.Container(
+                content=ft.Text(
+                    user["bio"],
+                    size=14,
+                    color="#555555",
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                width=400,
+                padding=ft.padding.only(top=10),
             ),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        spacing=8,
+    )
+
+    # Stats section with counters
+    stats_row = ft.Row(
+        [
+            # Publications counter
+            ft.Container(
+                content=ft.Column(
+                    [
+                        ft.Row(
+                            [
+                                ft.Icon(
+                                    ft.Icons.ARTICLE_OUTLINED,
+                                    color="#4CAF50",
+                                    size=24,
+                                ),
+                                ft.Text(
+                                    str(user_posts_count),
+                                    size=24,
+                                    weight=ft.FontWeight.BOLD,
+                                    color="#333333",
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=8,
+                        ),
+                        ft.Text(
+                            "Publicações",
+                            size=12,
+                            color="#777777",
+                        ),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=5,
+                ),
+                padding=15,
+                border_radius=8,
+                bgcolor="#ffffff",
+                expand=True,
+            ),
+            # Reputation counter
+            ft.Container(
+                content=ft.Column(
+                    [
+                        ft.Row(
+                            [
+                                ft.Icon(
+                                    ft.Icons.STAR,
+                                    color="#FF9800",
+                                    size=24,
+                                ),
+                                ft.Text(
+                                    f"{user['reputation']:.1f}",
+                                    size=24,
+                                    weight=ft.FontWeight.BOLD,
+                                    color="#333333",
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=8,
+                        ),
+                        ft.Text(
+                            "Reputação",
+                            size=12,
+                            color="#777777",
+                        ),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=5,
+                ),
+                padding=15,
+                border_radius=8,
+                bgcolor="#ffffff",
+                expand=True,
+            ),
+        ],
         spacing=15,
+        width=400,
     )
 
     # "Nova publicação" button
@@ -68,7 +148,7 @@ def perfil(page: ft.Page):
         bgcolor="#4CAF50",
         color="white",
         on_click=lambda e: open_new_post_dialog(page),
-        width=300,
+        width=400,
         height=50,
     )
 
@@ -77,36 +157,30 @@ def perfil(page: ft.Page):
         content=ft.Container(
             content=ft.Column(
                 [
-                    profile_content,
+                    profile_header,
+                    ft.Divider(height=20, color="#eeeeee"),
+                    stats_row,
                     novo_button,
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=30,
+                spacing=20,
             ),
             padding=40,
-            width=450,
+            width=500,
         ),
         elevation=4,
     )
 
-    # Bottom navigation bar (consistent across pages)
-    nav = ft.NavigationBar(
-        selected_index=2,  # Profile is selected
-        on_change=on_nav_change,
-        destinations=[
-            ft.NavigationBarDestination(icon=ft.Icons.HOME, label="Início"),
-            ft.NavigationBarDestination(icon=ft.Icons.ADD_BOX, label="Novo"),
-            ft.NavigationBarDestination(icon=ft.Icons.PERSON, label="Perfil"),
-        ],
-        bgcolor="#ffffff",
-        indicator_color="#4CAF50",
-    )
+    # Get reusable components
+    top_bar = create_app_bar()
+    nav = create_nav_bar(page, selected_index=2)  # Profile is selected
 
-    # Main layout with centered content
+    # Main layout with top bar, centered content, and bottom navigation
     page.add(
         ft.Column(
             [
+                top_bar,
                 ft.Container(
                     content=content_card,
                     expand=True,

@@ -95,3 +95,20 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_date": "2 semanas atrás",
         },
     ]
+
+
+def count_user_posts(author_name: str) -> int:
+    """Count the number of posts by a specific author.
+
+    Parameters
+    ----------
+    author_name : str
+        The name of the author to count posts for
+
+    Returns
+    -------
+    int
+        Number of posts by that author
+    """
+    posts = get_mock_posts()
+    return sum(1 for post in posts if post["author_name"] == author_name)

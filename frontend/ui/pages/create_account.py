@@ -10,7 +10,7 @@ def create_account(page: ft.Page):
 
     # Logo or title (consistent with login page)
     logo = ft.Text(
-        "Rede de Trocas", size=30, weight=ft.FontWeight.BOLD, color="#333"
+        "Rede de Trocas", size=30, weight=ft.FontWeight.BOLD, color="#333333"
     )
 
     # Registration fields
@@ -73,7 +73,7 @@ def create_account(page: ft.Page):
 
     # Optional: back to login link
     def go_to_login(e):
-        from frontend.ui.login_page import main as login_page_main
+        from frontend.ui.pages.login import main as login_page_main
         page.clean()
         login_page_main(page)
 

@@ -1,6 +1,6 @@
 import flet as ft
-from frontend.ui.dashboard_page import dashboard
-from frontend.ui.create_account import create_account
+from .dashboard import dashboard
+from .create_account import create_account
 
 
 def main(page: ft.Page):
@@ -10,7 +10,7 @@ def main(page: ft.Page):
     page.bgcolor = "#f5f5f5"
 
     # Logo or title
-    logo = ft.Text("Rede de Trocas", size=30, weight=ft.FontWeight.BOLD, color="#333")
+    logo = ft.Text("Rede de Trocas", size=30, weight=ft.FontWeight.BOLD, color="#333333")
 
     # Login fields
     email = ft.TextField(

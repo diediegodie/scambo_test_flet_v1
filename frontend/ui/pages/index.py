@@ -1,9 +1,6 @@
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 import flet as ft
-from frontend.ui.login_page import main as login_page
-from frontend.ui.create_account import create_account
+from .login import main as login_page
+from .create_account import create_account
 
 
 def index(page: ft.Page):
@@ -14,11 +11,11 @@ def index(page: ft.Page):
     page.bgcolor = "#f5f5f5"
 
     # Navigation handlers
-    def go_to_login(e):
+    def go_to_login(_):
         page.clean()
         login_page(page)
 
-    def go_to_create_account(e):
+    def go_to_create_account(_):
         page.clean()
         create_account(page)
 

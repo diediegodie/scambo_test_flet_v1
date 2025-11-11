@@ -10,7 +10,7 @@ def main(page: ft.Page):
     page.bgcolor = "#f5f5f5"
 
     # Logo or title
-    logo = ft.Text("Rede de Trocas", size=30, weight=ft.FontWeight.BOLD, color="#333333")
+    logo = ft.Text("Login", size=30, weight=ft.FontWeight.BOLD, color="#333333")
 
     # Login fields
     email = ft.TextField(

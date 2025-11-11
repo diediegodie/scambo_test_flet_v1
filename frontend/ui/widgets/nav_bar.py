@@ -5,23 +5,24 @@ Provides consistent bottom navigation across dashboard and profile pages.
 
 import flet as ft
 from .new_post_dialog import open_new_post_dialog
+from mock.notifications import get_mock_notifications_count
 
 
 def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
-    """Create reusable bottom NavigationBar with three destinations.
+    """Create reusable bottom NavigationBar with five destinations.
 
     Parameters
     ----------
     page : ft.Page
         Flet page instance for navigation handling
     selected_index : int, optional
-        Index of the currently selected tab (0=Dashboard, 1=Novo, 2=Profile)
-        Default is 0 (Dashboard)
+        Index of the currently selected tab (0=Início, 1=Novo, 2=Perfil, 3=Buscar, 4=Notificações)
+        Default is 0 (Início)
 
     Returns
     -------
     ft.NavigationBar
-        Styled navigation bar with three destinations
+        Styled navigation bar with five destinations including notifications badge
     """
 
     def on_nav_change(e):
@@ -41,6 +42,42 @@ def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
 
             page.clean()
             perfil(page)
+        elif selected == 3:  # Buscar
+            # TODO: Implement search functionality
+            pass
+        elif selected == 4:  # Notificações
+            # TODO: Implement notifications page
+            pass
+
+    # Get notifications count for badge
+    notifications_count = get_mock_notifications_count()
+
+    # Create notifications icon with badge using Stack
+    notifications_icon = ft.Stack(
+        [
+            ft.Icon(ft.Icons.NOTIFICATIONS_OUTLINED),
+            (
+                ft.Container(
+                    content=ft.Text(
+                        str(notifications_count),
+                        size=10,
+                        color="white",
+                        weight=ft.FontWeight.BOLD,
+                    ),
+                    bgcolor="#F44336",
+                    border_radius=ft.border_radius.all(10),
+                    padding=ft.padding.symmetric(horizontal=5, vertical=2),
+                    alignment=ft.alignment.center,
+                    top=0,
+                    right=0,
+                )
+                if notifications_count > 0
+                else ft.Container()
+            ),
+        ],
+        width=24,
+        height=24,
+    )
 
     return ft.NavigationBar(
         selected_index=selected_index,
@@ -49,6 +86,8 @@ def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
             ft.NavigationBarDestination(icon=ft.Icons.HOME, label="Início"),
             ft.NavigationBarDestination(icon=ft.Icons.ADD_BOX, label="Novo"),
             ft.NavigationBarDestination(icon=ft.Icons.PERSON, label="Perfil"),
+            ft.NavigationBarDestination(icon=ft.Icons.SEARCH, label="Buscar"),
+            ft.NavigationBarDestination(icon=notifications_icon, label="Notificações"),
         ],
         bgcolor="#ffffff",
         indicator_color="#4CAF50",

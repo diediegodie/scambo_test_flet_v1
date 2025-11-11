@@ -5,7 +5,6 @@
 
 import flet as ft
 from ..widgets.new_post_dialog import open_new_post_dialog
-from ..widgets.app_bar import create_app_bar
 from ..widgets.nav_bar import create_nav_bar
 from mock.user import get_current_user
 from mock.posts import count_user_posts
@@ -172,15 +171,13 @@ def perfil(page: ft.Page):
         elevation=4,
     )
 
-    # Get reusable components
-    top_bar = create_app_bar()
+    # Get reusable navigation bar
     nav = create_nav_bar(page, selected_index=2)  # Profile is selected
 
-    # Main layout with top bar, centered content, and bottom navigation
+    # Main layout with centered content and bottom navigation (no top bar)
     page.add(
         ft.Column(
             [
-                top_bar,
                 ft.Container(
                     content=content_card,
                     expand=True,

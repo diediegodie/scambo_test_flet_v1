@@ -1,9 +1,8 @@
 import flet as ft
-from ..widgets.new_post_dialog import open_new_post_dialog
 from ..widgets.post_card import PostCard
-from ..widgets.app_bar import create_app_bar
 from ..widgets.nav_bar import create_nav_bar
 from mock.posts import get_mock_posts
+from mock.comments import get_mock_comments
 
 
 def dashboard(page: ft.Page):
@@ -17,10 +16,13 @@ def dashboard(page: ft.Page):
     mock_posts = get_mock_posts()
 
     feed_cards = []
-    for mp in mock_posts:
+    for idx, mp in enumerate(mock_posts):
         avatar = ft.CircleAvatar(
             bgcolor=mp["avatar_bg"], content=ft.Text(mp["avatar_text"], color="white")
         )
+        # Get comments for this post (using index as post_id)
+        post_comments = get_mock_comments(idx)
+
         feed_cards.append(
             ft.Container(
                 alignment=ft.alignment.center,
@@ -30,6 +32,9 @@ def dashboard(page: ft.Page):
                     post_title=mp["post_title"],
                     post_description=mp["post_description"],
                     post_date=mp["post_date"],
+                    image_path=mp.get("image_path"),
+                    tags=mp.get("tags"),
+                    comments=post_comments,
                     width=450,
                 ),
             )
@@ -44,15 +49,13 @@ def dashboard(page: ft.Page):
         auto_scroll=False,
     )
 
-    # Get reusable components
-    top_bar = create_app_bar()
+    # Get reusable navigation bar
     nav = create_nav_bar(page, selected_index=0)
 
-    # Main layout: top actions, expandable feed, bottom navigation
+    # Main layout: expandable feed + bottom navigation (no top bar)
     page.add(
         ft.Column(
             [
-                top_bar,
                 feed_list,
                 nav,
             ],

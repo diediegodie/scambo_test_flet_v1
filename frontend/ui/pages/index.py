@@ -3,8 +3,8 @@ from .login import main as login_page
 from .create_account import create_account
 
 
+# Landing page with navigation to login and create account.
 def index(page: ft.Page):
-    """Landing page with navigation to login and create account."""
     page.title = "SCAMBO"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER

@@ -4,14 +4,14 @@ Replace usages of these functions with real API calls when backend is ready.
 """
 
 from __future__ import annotations
-from typing import List, Dict
+from typing import List, Dict, Any
 
 
-def get_mock_posts() -> List[Dict[str, str]]:
+def get_mock_posts() -> List[Dict[str, Any]]:
     """Return a list of mock post dictionaries.
 
     Each dict contains keys: author_name, avatar_bg, avatar_text, post_title,
-    post_description, post_date.
+    post_description, post_date, tags, image_path.
     """
     return [
         {
@@ -21,6 +21,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Troco aula de violão 🎸",
             "post_description": "Ofereço aulas básicas aos sábados (iniciantes) em troca de acessórios de informática: cabo HDMI, suporte de notebook ou teclado mecânico.",
             "post_date": "Hoje",
+            "tags": ["educação", "música", "tecnologia"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Bruna",
@@ -29,6 +31,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Busco bicicleta urbana",
             "post_description": "Troco notebook Lenovo antigo (funcionando, 8GB RAM) por bicicleta urbana em bom estado. Aceito modelos sem marcha se estiverem bem conservados.",
             "post_date": "Ontem",
+            "tags": ["tecnologia", "transporte", "troca"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Neto",
@@ -37,6 +41,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Serviço de manutenção PC",
             "post_description": "Faço limpeza interna, troca de pasta térmica e otimização de software em troca de curso de inglês presencial ou material didático atualizado.",
             "post_date": "2 dias atrás",
+            "tags": ["serviços", "tecnologia", "educação"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Lia",
@@ -45,6 +51,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Aulas de desenho digital",
             "post_description": "Ofereço 4 aulas de introdução a desenho digital (Procreate ou Krita) em troca de mesa digitalizadora usada ou livros de arte/anatomia.",
             "post_date": "3 dias atrás",
+            "tags": ["educação", "arte", "digital"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Rafael",
@@ -53,6 +61,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": 'Troco monitor 24" LED',
             "post_description": 'Troco monitor LED 24" (sem pixels queimados) por cadeira de escritório ergonômica ou apoio de pés.',
             "post_date": "4 dias atrás",
+            "tags": ["tecnologia", "escritório", "troca"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Sofia",
@@ -61,6 +71,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Consultoria LinkedIn",
             "post_description": "Reviso perfil do LinkedIn, otimizo título, resumo e experiência em troca de livros de carreira ou curso rápido de Excel avançado.",
             "post_date": "5 dias atrás",
+            "tags": ["serviços", "carreira", "consultoria"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Téo",
@@ -69,6 +81,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Impressões 3D sob demanda",
             "post_description": "Faço impressão 3D de pequenas peças (PLA) em troca de filamento novo ou ferramentas de acabamento (lixas, estiletes).",
             "post_date": "1 semana atrás",
+            "tags": ["serviços", "tecnologia", "impressão-3d"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Vivi",
@@ -77,6 +91,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Troco coleção de mangás",
             "post_description": "Coleção completa de 12 volumes (bom estado) em troca de board game moderno (Dixit, Azul, Splendor) ou fone Bluetooth.",
             "post_date": "1 semana atrás",
+            "tags": ["entretenimento", "troca", "colecionáveis"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Gui",
@@ -85,6 +101,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Aulas de Python iniciante 🐍",
             "post_description": "5 encontros (online) cobrindo lógica, listas, funções e pacotes básicos em troca de licença de editor ou headset USB.",
             "post_date": "2 semanas atrás",
+            "tags": ["educação", "programação", "python"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
         {
             "author_name": "Cami",
@@ -93,6 +111,8 @@ def get_mock_posts() -> List[Dict[str, str]]:
             "post_title": "Organização de home office",
             "post_description": "Ajudo a reorganizar setup, ergonomia e cabos em troca de luminária articulada ou suporte de monitor duplo.",
             "post_date": "2 semanas atrás",
+            "tags": ["serviços", "escritório", "organização"],
+            "image_path": "frontend/assets/img_placeholder.png",
         },
     ]
 

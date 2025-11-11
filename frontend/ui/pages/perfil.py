@@ -41,11 +41,11 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
                 bgcolor=user["avatar_bg"],
                 content=ft.Text(
                     user["avatar_text"],
-                    color="white",
+                    color=AppTheme.TEXT_ON_COLORED_BG,
                     size=AppTheme.ICON_SIZE_XL,  # 40px
                     weight=AppTheme.FONT_WEIGHT_BOLD,
                 ),
-                radius=50,
+                radius=AppTheme.AVATAR_RADIUS_LARGE,
             ),
             ft.Text(
                 user["name"],

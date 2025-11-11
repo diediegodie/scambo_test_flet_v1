@@ -66,7 +66,7 @@ def create_nav_bar(
                     content=ft.Text(
                         str(notifications_count),
                         size=AppTheme.FONT_SIZE_SMALL,
-                        color="white",
+                        color=AppTheme.TEXT_ON_COLORED_BG,
                         weight=AppTheme.FONT_WEIGHT_BOLD,
                     ),
                     bgcolor=AppTheme.ERROR,

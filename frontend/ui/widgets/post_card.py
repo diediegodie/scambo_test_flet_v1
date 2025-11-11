@@ -132,7 +132,7 @@ def PostCard(
                 content=ft.Text(
                     tag,
                     size=AppTheme.FONT_SIZE_SMALL,
-                    color="white",
+                    color=AppTheme.TEXT_ON_COLORED_BG,
                     weight=AppTheme.FONT_WEIGHT_MEDIUM,
                 ),
                 bgcolor=AppTheme.PRIMARY_GREEN,
@@ -180,10 +180,10 @@ def PostCard(
                 bgcolor=comment.get("avatar_bg", AppTheme.DEFAULT_AVATAR_BG),
                 content=ft.Text(
                     comment.get("avatar_text", "?"),
-                    color="white",
+                    color=AppTheme.TEXT_ON_COLORED_BG,
                     size=AppTheme.FONT_SIZE_CAPTION,
                 ),
-                radius=16,
+                radius=AppTheme.AVATAR_RADIUS_SMALL,
             )
 
             comment_widget = ft.Row(

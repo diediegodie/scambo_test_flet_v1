@@ -31,7 +31,8 @@ def dashboard(page: ft.Page, is_dark_mode: bool = False):
     feed_cards = []
     for idx, mp in enumerate(mock_posts):
         avatar = ft.CircleAvatar(
-            bgcolor=mp["avatar_bg"], content=ft.Text(mp["avatar_text"], color="white")
+            bgcolor=mp["avatar_bg"],
+            content=ft.Text(mp["avatar_text"], color=AppTheme.TEXT_ON_COLORED_BG),
         )
         # Get comments for this post (using index as post_id)
         post_comments = get_mock_comments(idx)

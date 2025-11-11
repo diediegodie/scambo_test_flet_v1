@@ -43,6 +43,7 @@ class AppTheme:
     WARNING = "#FF9800"
     INFO = "#2196F3"
     DEFAULT_AVATAR_BG = "#9E9E9E"  # Fallback avatar background color
+    TEXT_ON_COLORED_BG = "#FFFFFF"  # White text on colored backgrounds (badges, tags, avatars)
 
     # Interactive States
     HOVER_OVERLAY_LIGHT = "#00000010"  # 10% black overlay
@@ -108,9 +109,12 @@ class AppTheme:
     LANDING_BUTTON_WIDTH = 150  # Width of action buttons on landing page
     LANDING_SPACER_HEIGHT = 30  # Spacing between logo and buttons
 
+    # Avatar dimensions
     AVATAR_SIZE_SMALL = 32
     AVATAR_SIZE_MEDIUM = 48
     AVATAR_SIZE_LARGE = 64
+    AVATAR_RADIUS_SMALL = 16  # Small avatar radius (comments, compact views)
+    AVATAR_RADIUS_LARGE = 50  # Large avatar radius (profile page, circular)
     
     # Post card specific
     POST_IMAGE_HEIGHT = 200  # Standard height for post card images

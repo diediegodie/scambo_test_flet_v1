@@ -6,9 +6,12 @@ Provides consistent bottom navigation across dashboard and profile pages.
 import flet as ft
 from .new_post_dialog import open_new_post_dialog
 from mock.notifications import get_mock_notifications_count
+from ..theme import AppTheme
 
 
-def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
+def create_nav_bar(
+    page: ft.Page, selected_index: int = 0, is_dark_mode: bool = False
+) -> ft.NavigationBar:
     """Create reusable bottom NavigationBar with five destinations.
 
     Parameters
@@ -18,6 +21,8 @@ def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
     selected_index : int, optional
         Index of the currently selected tab (0=Início, 1=Novo, 2=Perfil, 3=Buscar, 4=Notificações)
         Default is 0 (Início)
+    is_dark_mode : bool, optional
+        Whether to use dark theme styling
 
     Returns
     -------
@@ -33,15 +38,15 @@ def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
             from ..pages.dashboard import dashboard
 
             page.clean()
-            dashboard(page)
+            dashboard(page, is_dark_mode)
         elif selected == 1:  # Novo
             # Open new post dialog directly without navigation
-            open_new_post_dialog(page)
+            open_new_post_dialog(page, is_dark_mode)
         elif selected == 2:  # Perfil
             from ..pages.perfil import perfil
 
             page.clean()
-            perfil(page)
+            perfil(page, is_dark_mode)
         elif selected == 3:  # Buscar
             # TODO: Implement search functionality
             pass
@@ -60,11 +65,11 @@ def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
                 ft.Container(
                     content=ft.Text(
                         str(notifications_count),
-                        size=10,
+                        size=AppTheme.FONT_SIZE_SMALL,
                         color="white",
-                        weight=ft.FontWeight.BOLD,
+                        weight=AppTheme.FONT_WEIGHT_BOLD,
                     ),
-                    bgcolor="#F44336",
+                    bgcolor=AppTheme.ERROR,
                     border_radius=ft.border_radius.all(10),
                     padding=ft.padding.symmetric(horizontal=5, vertical=2),
                     alignment=ft.alignment.center,
@@ -75,8 +80,8 @@ def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
                 else ft.Container()
             ),
         ],
-        width=24,
-        height=24,
+        width=AppTheme.BADGE_SIZE,
+        height=AppTheme.BADGE_SIZE,
     )
 
     return ft.NavigationBar(
@@ -89,6 +94,7 @@ def create_nav_bar(page: ft.Page, selected_index: int = 0) -> ft.NavigationBar:
             ft.NavigationBarDestination(icon=ft.Icons.SEARCH, label="Buscar"),
             ft.NavigationBarDestination(icon=notifications_icon, label="Notificações"),
         ],
-        bgcolor="#ffffff",
-        indicator_color="#4CAF50",
+        bgcolor=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
+        indicator_color=AppTheme.PRIMARY_GREEN,
+        label_behavior=ft.NavigationBarLabelBehavior.ALWAYS_SHOW,
     )

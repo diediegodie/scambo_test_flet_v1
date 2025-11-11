@@ -1,71 +1,94 @@
 import flet as ft
 from .dashboard import dashboard
 from .create_account import create_account
+from ..theme import AppTheme
 
 
-def main(page: ft.Page):
+def main(page: ft.Page, is_dark_mode: bool = False):
+    """
+    Login page with email and password fields.
+
+    Parameters
+    ----------
+    page : ft.Page
+        Flet page instance
+    is_dark_mode : bool, optional
+        Whether to use dark theme styling
+    """
     page.title = "Login"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.bgcolor = "#f5f5f5"
+    page.bgcolor = (
+        AppTheme.DARK_BACKGROUND if is_dark_mode else AppTheme.LIGHT_BACKGROUND
+    )
 
     # Logo or title
-    logo = ft.Text("Login", size=30, weight=ft.FontWeight.BOLD, color="#333333")
+    logo = ft.Text(
+        "Login",
+        size=AppTheme.FONT_SIZE_TITLE + 6,
+        weight=AppTheme.FONT_WEIGHT_BOLD,
+        color=(
+            AppTheme.DARK_TEXT_PRIMARY if is_dark_mode else AppTheme.LIGHT_TEXT_PRIMARY
+        ),
+    )
 
     # Login fields
-    email = ft.TextField(
+    email = AppTheme.get_input_field(
         label="Email",
         hint_text="Digite seu email",
-        width=300,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
         prefix_icon=ft.Icons.EMAIL,
-        border_radius=10,
     )
-    password = ft.TextField(
+    password = AppTheme.get_input_field(
         label="Senha",
         hint_text="Digite sua senha",
         password=True,
-        can_reveal_password=True,
-        width=300,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
         prefix_icon=ft.Icons.LOCK,
-        border_radius=10,
+        can_reveal_password=True,
     )
 
     # Login button
     def login_click(e):
         # Here you can validate and redirect to the dashboard
         page.clean()
-        dashboard(page)
+        dashboard(page, is_dark_mode)
 
-    login_btn = ft.ElevatedButton(
+    login_btn = AppTheme.get_elevated_button(
         text="Entrar",
-        width=300,
-        bgcolor="#4CAF50",
-        color="white",
         on_click=login_click,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
     )
 
     # Create account link
     def go_to_create_account(e):
         page.clean()
-        create_account(page)
+        create_account(page, is_dark_mode)
 
-    create_account_link = ft.TextButton(
-        "Criar uma conta",
+    create_account_link = AppTheme.get_text_button(
+        text="Criar uma conta",
         on_click=go_to_create_account,
+        is_dark_mode=is_dark_mode,
     )
 
     # Central card
     login_card = ft.Card(
+        elevation=AppTheme.CARD_ELEVATION,
+        color=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
         content=ft.Container(
             content=ft.Column(
                 [logo, email, password, login_btn, create_account_link],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=20,
+                spacing=AppTheme.SPACING_LG,
             ),
-            padding=30,
-            width=400,
-        )
+            padding=AppTheme.SPACING_XL,
+            width=AppTheme.CARD_WIDTH_NARROW,
+            border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
+        ),
     )
 
     page.add(login_card)

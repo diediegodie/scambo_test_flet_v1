@@ -7,6 +7,7 @@ Use only from page-level modules (e.g., dashboard, profile feeds).
 from __future__ import annotations
 import flet as ft
 from typing import List
+from ..theme import AppTheme
 
 
 def PostCard(
@@ -18,7 +19,8 @@ def PostCard(
     image_path: str | None = None,
     tags: List[str] | None = None,
     comments: List[dict] | None = None,
-    width: int | None = 450,
+    width: int | None = None,
+    is_dark_mode: bool = False,
 ) -> ft.Card:
     """Return a styled post card.
 
@@ -32,8 +34,12 @@ def PostCard(
     image_path: Optional path to post image. Uses placeholder if provided.
     tags: Optional list of tag strings to display below description.
     comments: Optional list of comment dicts with keys: author_name, avatar_bg, avatar_text, comment_text.
-    width: Card width in pixels (default 450).
+    width: Card width in pixels (default CARD_WIDTH_STANDARD from theme).
+    is_dark_mode: Whether to apply dark theme styling.
     """
+
+    # Use theme default width if not specified
+    card_width = width or AppTheme.CARD_WIDTH_STANDARD
 
     # Helper function to truncate description
     def truncate_text(text: str, max_length: int = 200) -> str:
@@ -49,16 +55,31 @@ def PostCard(
             ft.Column(
                 [
                     ft.Text(
-                        author_name, weight=ft.FontWeight.BOLD, size=16, color="#333333"
+                        author_name,
+                        weight=AppTheme.FONT_WEIGHT_BOLD,
+                        size=AppTheme.FONT_SIZE_BODY,
+                        color=(
+                            AppTheme.DARK_TEXT_PRIMARY
+                            if is_dark_mode
+                            else AppTheme.LIGHT_TEXT_PRIMARY
+                        ),
                     ),
-                    ft.Text(post_date, size=11, color="#777777"),
+                    ft.Text(
+                        post_date,
+                        size=AppTheme.FONT_SIZE_SMALL,
+                        color=(
+                            AppTheme.DARK_TEXT_TERTIARY
+                            if is_dark_mode
+                            else AppTheme.LIGHT_TEXT_TERTIARY
+                        ),
+                    ),
                 ],
                 spacing=2,
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
             ),
         ],
-        spacing=12,
+        spacing=AppTheme.SPACING_MD,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
@@ -68,22 +89,39 @@ def PostCard(
         image_container = ft.Container(
             content=ft.Image(
                 src=image_path,
-                width=width - 30 if width else 420,  # Account for card padding
-                height=200,
+                width=card_width - 30,  # Account for card padding
+                height=AppTheme.POST_IMAGE_HEIGHT,
                 fit=ft.ImageFit.COVER,
-                border_radius=ft.border_radius.all(8),
+                border_radius=ft.border_radius.all(AppTheme.SPACING_SM),
             ),
-            margin=ft.margin.only(top=8, bottom=8),
+            margin=ft.margin.only(top=AppTheme.SPACING_SM, bottom=AppTheme.SPACING_SM),
         )
 
     # Title + description with truncation
     truncated_description = truncate_text(post_description, 200)
     body = ft.Column(
         [
-            ft.Text(post_title, size=15, weight=ft.FontWeight.W_600, color="#333333"),
-            ft.Text(truncated_description, size=13, color="#555555"),
+            ft.Text(
+                post_title,
+                size=AppTheme.FONT_SIZE_SUBTITLE,
+                weight=AppTheme.FONT_WEIGHT_MEDIUM,
+                color=(
+                    AppTheme.DARK_TEXT_PRIMARY
+                    if is_dark_mode
+                    else AppTheme.LIGHT_TEXT_PRIMARY
+                ),
+            ),
+            ft.Text(
+                truncated_description,
+                size=AppTheme.FONT_SIZE_BODY,
+                color=(
+                    AppTheme.DARK_TEXT_SECONDARY
+                    if is_dark_mode
+                    else AppTheme.LIGHT_TEXT_SECONDARY
+                ),
+            ),
         ],
-        spacing=6,
+        spacing=AppTheme.SPACING_SM,
     )
 
     # Tags row (if tags provided)
@@ -93,36 +131,40 @@ def PostCard(
             ft.Container(
                 content=ft.Text(
                     tag,
-                    size=11,
+                    size=AppTheme.FONT_SIZE_SMALL,
                     color="white",
-                    weight=ft.FontWeight.W_500,
+                    weight=AppTheme.FONT_WEIGHT_MEDIUM,
                 ),
-                bgcolor="#4CAF50",
+                bgcolor=AppTheme.PRIMARY_GREEN,
                 padding=ft.padding.symmetric(horizontal=10, vertical=5),
-                border_radius=ft.border_radius.all(12),
+                border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
             )
             for tag in tags
         ]
         tags_row = ft.Row(
             controls=tag_chips,
-            spacing=6,
+            spacing=AppTheme.SPACING_SM,
             wrap=True,
         )
 
     # Actions row
     like_btn = ft.IconButton(
-        icon=ft.Icons.FAVORITE_BORDER, tooltip="Curtir", icon_color="#4CAF50"
+        icon=ft.Icons.FAVORITE_BORDER,
+        tooltip="Curtir",
+        icon_color=AppTheme.PRIMARY_GREEN,
     )
     comment_btn = ft.IconButton(
-        icon=ft.Icons.CHAT_BUBBLE_OUTLINE, tooltip="Comentar", icon_color="#4CAF50"
+        icon=ft.Icons.CHAT_BUBBLE_OUTLINE,
+        tooltip="Comentar",
+        icon_color=AppTheme.PRIMARY_GREEN,
     )
     share_btn = ft.IconButton(
-        icon=ft.Icons.SHARE, tooltip="Compartilhar", icon_color="#4CAF50"
+        icon=ft.Icons.SHARE, tooltip="Compartilhar", icon_color=AppTheme.PRIMARY_GREEN
     )
 
     actions = ft.Row(
         [like_btn, comment_btn, share_btn],
-        spacing=4,
+        spacing=AppTheme.SPACING_XS,
         alignment=ft.MainAxisAlignment.START,
     )
 
@@ -135,9 +177,11 @@ def PostCard(
 
         for comment in displayed_comments:
             comment_avatar = ft.CircleAvatar(
-                bgcolor=comment.get("avatar_bg", "#9E9E9E"),
+                bgcolor=comment.get("avatar_bg", AppTheme.DEFAULT_AVATAR_BG),
                 content=ft.Text(
-                    comment.get("avatar_text", "?"), color="white", size=12
+                    comment.get("avatar_text", "?"),
+                    color="white",
+                    size=AppTheme.FONT_SIZE_CAPTION,
                 ),
                 radius=16,
             )
@@ -149,21 +193,29 @@ def PostCard(
                         [
                             ft.Text(
                                 comment.get("author_name", "Anônimo"),
-                                weight=ft.FontWeight.BOLD,
-                                size=13,
-                                color="#333333",
+                                weight=AppTheme.FONT_WEIGHT_BOLD,
+                                size=AppTheme.FONT_SIZE_BODY,
+                                color=(
+                                    AppTheme.DARK_TEXT_PRIMARY
+                                    if is_dark_mode
+                                    else AppTheme.LIGHT_TEXT_PRIMARY
+                                ),
                             ),
                             ft.Text(
                                 comment.get("comment_text", ""),
-                                size=12,
-                                color="#555555",
+                                size=AppTheme.FONT_SIZE_CAPTION,
+                                color=(
+                                    AppTheme.DARK_TEXT_SECONDARY
+                                    if is_dark_mode
+                                    else AppTheme.LIGHT_TEXT_SECONDARY
+                                ),
                             ),
                         ],
                         spacing=2,
                         expand=True,
                     ),
                 ],
-                spacing=8,
+                spacing=AppTheme.SPACING_SM,
                 vertical_alignment=ft.CrossAxisAlignment.START,
             )
             comment_widgets.append(comment_widget)
@@ -172,18 +224,18 @@ def PostCard(
         if len(comments) > 3:
             view_more_btn = ft.TextButton(
                 text=f"Ver mais {len(comments) - 3} comentário(s)",
-                style=ft.ButtonStyle(color="#4CAF50"),
+                style=ft.ButtonStyle(color=AppTheme.PRIMARY_GREEN),
             )
             comment_widgets.append(
                 ft.Container(
                     content=view_more_btn,
-                    padding=ft.padding.only(left=40, top=4),
+                    padding=ft.padding.only(left=40, top=AppTheme.SPACING_XS),
                 )
             )
 
         comments_section = ft.Column(
             controls=comment_widgets,
-            spacing=8,
+            spacing=AppTheme.SPACING_SM,
         )
 
     # Build card content with conditional elements
@@ -198,23 +250,35 @@ def PostCard(
     if tags_row:
         card_elements.append(tags_row)
 
-    card_elements.append(ft.Divider(height=8, color="#e0e0e0"))
+    card_elements.append(
+        ft.Divider(
+            height=AppTheme.DIVIDER_HEIGHT,
+            color=AppTheme.DARK_BORDER if is_dark_mode else AppTheme.LIGHT_BORDER,
+        )
+    )
     card_elements.append(actions)
 
     if comments_section:
-        card_elements.append(ft.Divider(height=8, color="#e0e0e0"))
+        card_elements.append(
+            ft.Divider(
+                height=AppTheme.DIVIDER_HEIGHT,
+                color=AppTheme.DARK_BORDER if is_dark_mode else AppTheme.LIGHT_BORDER,
+            )
+        )
         card_elements.append(comments_section)
 
     return ft.Card(
-        elevation=3,
-        width=width,
+        elevation=AppTheme.CARD_ELEVATION,
+        width=card_width,
+        color=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
         content=ft.Container(
-            padding=15,
+            padding=AppTheme.SPACING_MD,
             content=ft.Column(
                 card_elements,
-                spacing=12,
+                spacing=AppTheme.SPACING_MD,
                 alignment=ft.MainAxisAlignment.START,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
             ),
+            border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
         ),
     )

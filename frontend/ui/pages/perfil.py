@@ -6,14 +6,26 @@
 import flet as ft
 from ..widgets.new_post_dialog import open_new_post_dialog
 from ..widgets.nav_bar import create_nav_bar
+from ..theme import AppTheme
 from mock.user import get_current_user
 from mock.posts import count_user_posts
 
 
-def perfil(page: ft.Page):
-    """Professional user profile page with avatar, bio, stats, and actions."""
+def perfil(page: ft.Page, is_dark_mode: bool = False):
+    """
+    Professional user profile page with avatar, bio, stats, and actions.
+
+    Parameters
+    ----------
+    page : ft.Page
+        Flet page instance
+    is_dark_mode : bool, optional
+        Whether to use dark theme styling
+    """
     page.title = "Perfil - Scambo"
-    page.bgcolor = "#f5f5f5"
+    page.bgcolor = (
+        AppTheme.DARK_BACKGROUND if is_dark_mode else AppTheme.LIGHT_BACKGROUND
+    )
     page.vertical_alignment = ft.MainAxisAlignment.START
     page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
     page.padding = 0
@@ -30,36 +42,48 @@ def perfil(page: ft.Page):
                 content=ft.Text(
                     user["avatar_text"],
                     color="white",
-                    size=40,
-                    weight=ft.FontWeight.BOLD,
+                    size=AppTheme.ICON_SIZE_XL,  # 40px
+                    weight=AppTheme.FONT_WEIGHT_BOLD,
                 ),
                 radius=50,
             ),
             ft.Text(
                 user["name"],
-                size=28,
-                weight=ft.FontWeight.BOLD,
-                color="#333333",
+                size=AppTheme.FONT_SIZE_TITLE,
+                weight=AppTheme.FONT_WEIGHT_BOLD,
+                color=(
+                    AppTheme.DARK_TEXT_PRIMARY
+                    if is_dark_mode
+                    else AppTheme.LIGHT_TEXT_PRIMARY
+                ),
             ),
             ft.Text(
                 user["email"],
-                size=14,
-                color="#777777",
+                size=AppTheme.FONT_SIZE_BODY,
+                color=(
+                    AppTheme.DARK_TEXT_TERTIARY
+                    if is_dark_mode
+                    else AppTheme.LIGHT_TEXT_TERTIARY
+                ),
             ),
             # Bio section
             ft.Container(
                 content=ft.Text(
                     user["bio"],
-                    size=14,
-                    color="#555555",
+                    size=AppTheme.FONT_SIZE_BODY,
+                    color=(
+                        AppTheme.DARK_TEXT_SECONDARY
+                        if is_dark_mode
+                        else AppTheme.LIGHT_TEXT_SECONDARY
+                    ),
                     text_align=ft.TextAlign.CENTER,
                 ),
-                width=400,
-                padding=ft.padding.only(top=10),
+                width=AppTheme.CARD_WIDTH_NARROW,
+                padding=ft.padding.only(top=AppTheme.SPACING_SM),
             ),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        spacing=8,
+        spacing=AppTheme.SPACING_SM,
     )
 
     # Stats section with counters
@@ -73,31 +97,41 @@ def perfil(page: ft.Page):
                             [
                                 ft.Icon(
                                     ft.Icons.ARTICLE_OUTLINED,
-                                    color="#4CAF50",
-                                    size=24,
+                                    color=AppTheme.PRIMARY_GREEN,
+                                    size=AppTheme.ICON_SIZE_LG,  # 24px
                                 ),
                                 ft.Text(
                                     str(user_posts_count),
-                                    size=24,
-                                    weight=ft.FontWeight.BOLD,
-                                    color="#333333",
+                                    size=AppTheme.FONT_SIZE_TITLE,
+                                    weight=AppTheme.FONT_WEIGHT_BOLD,
+                                    color=(
+                                        AppTheme.DARK_TEXT_PRIMARY
+                                        if is_dark_mode
+                                        else AppTheme.LIGHT_TEXT_PRIMARY
+                                    ),
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
-                            spacing=8,
+                            spacing=AppTheme.SPACING_SM,
                         ),
                         ft.Text(
                             "Publicações",
-                            size=12,
-                            color="#777777",
+                            size=AppTheme.FONT_SIZE_CAPTION,
+                            color=(
+                                AppTheme.DARK_TEXT_TERTIARY
+                                if is_dark_mode
+                                else AppTheme.LIGHT_TEXT_TERTIARY
+                            ),
                         ),
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    spacing=5,
+                    spacing=AppTheme.SPACING_XS,  # 4px
                 ),
-                padding=15,
-                border_radius=8,
-                bgcolor="#ffffff",
+                padding=AppTheme.SPACING_MD,
+                border_radius=AppTheme.CARD_BORDER_RADIUS,
+                bgcolor=(
+                    AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE
+                ),
                 expand=True,
             ),
             # Reputation counter
@@ -108,71 +142,82 @@ def perfil(page: ft.Page):
                             [
                                 ft.Icon(
                                     ft.Icons.STAR,
-                                    color="#FF9800",
-                                    size=24,
+                                    color=AppTheme.WARNING,
+                                    size=AppTheme.ICON_SIZE_LG,  # 24px
                                 ),
                                 ft.Text(
                                     f"{user['reputation']:.1f}",
-                                    size=24,
-                                    weight=ft.FontWeight.BOLD,
-                                    color="#333333",
+                                    size=AppTheme.FONT_SIZE_TITLE,
+                                    weight=AppTheme.FONT_WEIGHT_BOLD,
+                                    color=(
+                                        AppTheme.DARK_TEXT_PRIMARY
+                                        if is_dark_mode
+                                        else AppTheme.LIGHT_TEXT_PRIMARY
+                                    ),
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
-                            spacing=8,
+                            spacing=AppTheme.SPACING_SM,
                         ),
                         ft.Text(
                             "Reputação",
-                            size=12,
-                            color="#777777",
+                            size=AppTheme.FONT_SIZE_CAPTION,
+                            color=(
+                                AppTheme.DARK_TEXT_TERTIARY
+                                if is_dark_mode
+                                else AppTheme.LIGHT_TEXT_TERTIARY
+                            ),
                         ),
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    spacing=5,
+                    spacing=AppTheme.SPACING_XS,  # 4px
                 ),
-                padding=15,
-                border_radius=8,
-                bgcolor="#ffffff",
+                padding=AppTheme.SPACING_MD,
+                border_radius=AppTheme.CARD_BORDER_RADIUS,
+                bgcolor=(
+                    AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE
+                ),
                 expand=True,
             ),
         ],
-        spacing=15,
-        width=400,
+        spacing=AppTheme.SPACING_MD,
+        width=AppTheme.CARD_WIDTH_NARROW,
     )
 
-    # "Nova publicação" button
-    novo_button = ft.ElevatedButton(
+    # Button for new publication (matching dashboard style)
+    novo_button = AppTheme.get_elevated_button(
         "Nova publicação",
-        icon=ft.Icons.ADD,
-        bgcolor="#4CAF50",
-        color="white",
-        on_click=lambda e: open_new_post_dialog(page),
-        width=400,
-        height=50,
+        on_click=lambda e: open_new_post_dialog(page, is_dark_mode),
+        width=AppTheme.BUTTON_WIDTH_MEDIUM,
+        height=AppTheme.BUTTON_HEIGHT,
     )
 
     # Main content card (centered like login/create account)
     content_card = ft.Card(
+        elevation=AppTheme.CARD_ELEVATION,
+        color=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
         content=ft.Container(
             content=ft.Column(
                 [
                     profile_header,
-                    ft.Divider(height=20, color="#eeeeee"),
+                    AppTheme.get_divider(is_dark_mode),
                     stats_row,
                     novo_button,
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=20,
+                spacing=AppTheme.SPACING_LG,
             ),
-            padding=40,
-            width=500,
+            padding=AppTheme.SPACING_XL + 8,  # 40px
+            width=AppTheme.CARD_WIDTH_PROFILE,
+            border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
         ),
-        elevation=4,
     )
 
     # Get reusable navigation bar
-    nav = create_nav_bar(page, selected_index=2)  # Profile is selected
+    nav = create_nav_bar(
+        page, selected_index=2, is_dark_mode=is_dark_mode
+    )  # Profile is selected
 
     # Main layout with centered content and bottom navigation (no top bar)
     page.add(

@@ -1,85 +1,102 @@
 import flet as ft
+from ..theme import AppTheme
 
 
-def create_account(page: ft.Page):
-    """User registration page with consistent styling to the login page."""
+def create_account(page: ft.Page, is_dark_mode: bool = False):
+    """
+    User registration page with consistent styling to the login page.
+
+    Parameters
+    ----------
+    page : ft.Page
+        Flet page instance
+    is_dark_mode : bool, optional
+        Whether to use dark theme styling
+    """
     page.title = "Criar conta"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.bgcolor = "#f5f5f5"
+    page.bgcolor = (
+        AppTheme.DARK_BACKGROUND if is_dark_mode else AppTheme.LIGHT_BACKGROUND
+    )
 
     # Logo or title (consistent with login page)
     logo = ft.Text(
-        "Rede de Trocas", size=30, weight=ft.FontWeight.BOLD, color="#333333"
+        "Rede de Trocas",
+        size=AppTheme.FONT_SIZE_TITLE + 6,
+        weight=AppTheme.FONT_WEIGHT_BOLD,
+        color=(
+            AppTheme.DARK_TEXT_PRIMARY if is_dark_mode else AppTheme.LIGHT_TEXT_PRIMARY
+        ),
     )
 
     # Registration fields
-    full_name = ft.TextField(
+    full_name = AppTheme.get_input_field(
         label="Nome completo",
         hint_text="Digite seu nome completo",
-        width=300,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
         prefix_icon=ft.Icons.PERSON,
-        border_radius=10,
     )
-    email = ft.TextField(
+    email = AppTheme.get_input_field(
         label="Email",
         hint_text="Digite seu email",
-        width=300,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
         prefix_icon=ft.Icons.EMAIL,
-        border_radius=10,
     )
-    phone = ft.TextField(
+    phone = AppTheme.get_input_field(
         label="Telefone",
         hint_text="Digite seu telefone",
-        width=300,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
         prefix_icon=ft.Icons.PHONE,
-        border_radius=10,
     )
-    password = ft.TextField(
+    password = AppTheme.get_input_field(
         label="Senha",
         hint_text="Crie uma senha",
         password=True,
-        can_reveal_password=True,
-        width=300,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
         prefix_icon=ft.Icons.LOCK,
-        border_radius=10,
+        can_reveal_password=True,
     )
-    confirm_password = ft.TextField(
+    confirm_password = AppTheme.get_input_field(
         label="Confirmar senha",
         hint_text="Repita a senha",
         password=True,
-        can_reveal_password=True,
-        width=300,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
         prefix_icon=ft.Icons.LOCK_OUTLINE,
-        border_radius=10,
+        can_reveal_password=True,
     )
 
     # Placeholder registration handler
-    status_text = ft.Text("")
+    status_text = ft.Text("", color=AppTheme.SUCCESS)
 
     def handle_create_account(e):
         # Placeholder action: update status text; integration will be added later.
         status_text.value = "Cadastro enviado (placeholder)"
-        status_text.color = "green"
         page.update()
 
-    create_btn = ft.ElevatedButton(
+    create_btn = AppTheme.get_elevated_button(
         text="Criar conta",
-        width=300,
-        bgcolor="#4CAF50",
-        color="white",
         on_click=handle_create_account,
+        is_dark_mode=is_dark_mode,
+        width=AppTheme.INPUT_FIELD_WIDTH,
     )
 
     # Optional: back to login link
     def go_to_login(e):
         from frontend.ui.pages.login import main as login_page_main
-        page.clean()
-        login_page_main(page)
 
-    back_to_login = ft.TextButton(
-        "Já tem uma conta? Entrar",
+        page.clean()
+        login_page_main(page, is_dark_mode)
+
+    back_to_login = AppTheme.get_text_button(
+        text="Já tem uma conta? Entrar",
         on_click=go_to_login,
+        is_dark_mode=is_dark_mode,
     )
 
     # Central card
@@ -97,15 +114,18 @@ def create_account(page: ft.Page):
         ],
         alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        spacing=20,
+        spacing=AppTheme.SPACING_LG,
     )
 
     register_card = ft.Card(
+        elevation=AppTheme.CARD_ELEVATION,
+        color=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
         content=ft.Container(
             content=form,
-            padding=30,
-            width=400,
-        )
+            padding=AppTheme.SPACING_XL,
+            width=AppTheme.CARD_WIDTH_NARROW,
+            border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
+        ),
     )
 
     page.add(register_card)

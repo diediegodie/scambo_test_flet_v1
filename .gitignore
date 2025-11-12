@@ -58,3 +58,4 @@ docs/
 # Sensitive or local config files
 config/local.py
 secrets.json
+.github/instructions/

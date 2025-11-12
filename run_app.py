@@ -15,8 +15,13 @@ from frontend.ui.theme import get_light_theme, get_dark_theme
 
 def main(page: ft.Page):
     """Launch the SCAMBO app starting from the landing page."""
-    # Set default theme (can be changed to dark theme or made user-selectable)
-    is_dark_mode = False  # Change to True for dark mode
+    # Get theme preference from client storage, default to light mode
+    is_dark_mode = page.client_storage.get("is_dark_mode")
+    if is_dark_mode is None:
+        is_dark_mode = False  # Default to light mode
+        page.client_storage.set("is_dark_mode", is_dark_mode)
+    
+    # Set theme based on preference
     page.theme = get_dark_theme() if is_dark_mode else get_light_theme()
 
     # Launch the app

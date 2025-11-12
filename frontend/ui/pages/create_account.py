@@ -89,9 +89,13 @@ def create_account(page: ft.Page, is_dark_mode: bool = False):
     # Optional: back to login link
     def go_to_login(e):
         from frontend.ui.pages.login import main as login_page_main
+        # Get current theme from client storage or use passed value
+        current_dark_mode = page.client_storage.get("is_dark_mode")
+        if current_dark_mode is None:
+            current_dark_mode = is_dark_mode
 
         page.clean()
-        login_page_main(page, is_dark_mode)
+        login_page_main(page, current_dark_mode)
 
     back_to_login = AppTheme.get_text_button(
         text="Já tem uma conta? Entrar",

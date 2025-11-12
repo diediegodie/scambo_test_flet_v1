@@ -43,12 +43,14 @@ class AppTheme:
     WARNING = "#FF9800"
     INFO = "#2196F3"
     DEFAULT_AVATAR_BG = "#9E9E9E"  # Fallback avatar background color
-    TEXT_ON_COLORED_BG = "#FFFFFF"  # White text on colored backgrounds (badges, tags, avatars)
+    TEXT_ON_COLORED_BG = (
+        "#FFFFFF"  # White text on colored backgrounds (badges, tags, avatars)
+    )
 
     # Interactive States
     HOVER_OVERLAY_LIGHT = "#00000010"  # 10% black overlay
     HOVER_OVERLAY_DARK = "#FFFFFF10"  # 10% white overlay
-    
+
     # NavigationBar Colors (lighter for better readability)
     NAV_ICON_LIGHT = "#495057"  # Lighter than primary text for subtle icons
     NAV_ICON_DARK = "#C9D1D9"  # Lighter than primary text in dark mode
@@ -80,11 +82,11 @@ class AppTheme:
     SPACING_MD = 16
     SPACING_LG = 24
     SPACING_XL = 32
-    
+
     # ============================================================================
     # ICON SIZES
     # ============================================================================
-    
+
     ICON_SIZE_SM = 16
     ICON_SIZE_MD = 20
     ICON_SIZE_LG = 24
@@ -93,17 +95,17 @@ class AppTheme:
     # ============================================================================
     # COMPONENT DIMENSIONS
     # ============================================================================
-    
+
     CARD_WIDTH_STANDARD = 450
     CARD_WIDTH_NARROW = 400
     CARD_WIDTH_PROFILE = 500  # Wider card for profile stats
     CARD_BORDER_RADIUS = 12
     CARD_ELEVATION = 3
-    
+
     INPUT_FIELD_WIDTH = 300  # Standard width for form inputs
     BUTTON_HEIGHT = 50  # Standard button height
     BUTTON_WIDTH_MEDIUM = 200  # Medium width buttons (e.g., "Nova publicação")
-    
+
     # Landing page specific
     LOGO_SIZE = 100  # Large logo text size
     LANDING_BUTTON_WIDTH = 150  # Width of action buttons on landing page
@@ -115,11 +117,11 @@ class AppTheme:
     AVATAR_SIZE_LARGE = 64
     AVATAR_RADIUS_SMALL = 16  # Small avatar radius (comments, compact views)
     AVATAR_RADIUS_LARGE = 50  # Large avatar radius (profile page, circular)
-    
+
     # Post card specific
     POST_IMAGE_HEIGHT = 200  # Standard height for post card images
     DIVIDER_HEIGHT = 1  # Thin divider line
-    
+
     # Navigation badge
     BADGE_SIZE = 24  # Small badge for notification count
 
@@ -208,7 +210,9 @@ class AppTheme:
         )
 
     @staticmethod
-    def get_elevated_button(text, on_click, is_dark_mode=False, width=None, height=None):
+    def get_elevated_button(
+        text, on_click, is_dark_mode=False, width=None, height=None
+    ):
         """
         Returns a standardized elevated button with consistent styling.
 
@@ -290,6 +294,37 @@ class AppTheme:
             height=1,
             color=AppTheme.DARK_BORDER if is_dark_mode else AppTheme.LIGHT_BORDER,
         )
+
+    # ============================================================================
+    # RESPONSIVE HELPERS (explore page)
+    # ============================================================================
+
+    @staticmethod
+    def get_responsive_container_width(window_width: int) -> int:
+        """
+        Returns a fixed container width based on responsive breakpoints.
+
+        Breakpoints:
+        - < 600px      -> CARD_WIDTH_STANDARD (450px)
+        - 600 - 900px  -> 600px
+        - > 900px      -> 800px
+
+        Args:
+            window_width: Current window width in pixels
+
+        Returns:
+            int: Container width in pixels according to the breakpoints
+        """
+        if window_width is None:
+            # Sensible default if width is unknown
+            return AppTheme.CARD_WIDTH_STANDARD
+
+        if window_width < 600:
+            return AppTheme.CARD_WIDTH_STANDARD
+        elif window_width < 900:
+            return 600
+        else:
+            return 800
 
 
 # ============================================================================

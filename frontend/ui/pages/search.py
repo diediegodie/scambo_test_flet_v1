@@ -6,7 +6,7 @@ Displays a search bar at the top and a grid of post images below:
 - Fully responsive layout (adaptive column count + flexible width)
 - Lazy loading for images (viewport-based rendering)
 - Image caching for smooth scrolling
-- Tap photo to view full post (future feature)
+- Tap photo to open post detail dialog modal
 - All styling uses theme.py constants for consistency
 
 Backend migration:
@@ -17,6 +17,7 @@ Backend migration:
 
 import flet as ft
 from ..widgets.nav_bar import create_nav_bar
+from ..widgets.post_detail_dialog import open_post_detail_dialog
 from ..theme import AppTheme
 from mock.posts import get_mock_posts
 
@@ -43,6 +44,8 @@ def search(page: ft.Page, is_dark_mode: bool = False):
     # State management
     search_query = ""
     all_posts = get_mock_posts()
+    filtered_posts = all_posts  # Posts after filtering by search query
+    is_loading = False  # Loading state for async operations
     photo_grid = None  # Will be initialized after calculating columns
     content_container = None  # Will be initialized after creation
     search_field = None  # Will be initialized after creation
@@ -75,11 +78,45 @@ def search(page: ft.Page, is_dark_mode: bool = False):
 
     def execute_search():
         """Execute the search action with current query."""
-        nonlocal search_query
-        # Future: Call API with search query
-        # For now, just log the search action
+        nonlocal search_query, filtered_posts, is_loading, photo_grid
+
+        # Set loading state
+        is_loading = True
+        if photo_grid:
+            photo_grid = build_photo_grid()
+            update_grid_in_content()
+
         print(f"Executing search for: {search_query}")  # Debug
-        # Future: Filter posts, call API, update grid, etc.
+
+        # Simulate async API call with delay (remove in production)
+        import threading
+
+        def finish_search():
+            nonlocal is_loading, filtered_posts, photo_grid
+
+            # Filter posts based on search query
+            if search_query.strip():
+                filtered_posts = [
+                    post
+                    for post in all_posts
+                    if search_query in post["post_title"].lower()
+                    or search_query in post["post_description"].lower()
+                    or any(search_query in tag.lower() for tag in post.get("tags", []))
+                ]
+            else:
+                filtered_posts = all_posts
+
+            # Clear loading state
+            is_loading = False
+            if photo_grid:
+                photo_grid = build_photo_grid()
+                update_grid_in_content()
+
+        # Simulate 800ms loading delay for UX demonstration
+        threading.Timer(0.8, finish_search).start()
+
+        # Future: Replace with actual API call
+        # filtered_posts = await api_client.search_posts(query=search_query)
 
     # on_search_change and on_clear_click are defined later (after buttons are created)
 
@@ -131,18 +168,17 @@ def search(page: ft.Page, is_dark_mode: bool = False):
             clear_btn.update()
 
     def on_photo_click(e):
-        """Handle photo click - future: open post detail modal."""
+        """Handle photo click - open post detail modal."""
         post_index = e.control.data
-        post = all_posts[post_index]
-        print(f"Clicked on post: {post['post_title']}")  # Debug
-        # Future: Open post detail modal or navigate to post page
-        snack = ft.SnackBar(
-            content=ft.Text(f"Post: {post['post_title']} (em breve)"),
-            bgcolor=AppTheme.INFO,
+        post = filtered_posts[post_index]
+        print(f"Opening post detail: {post['post_title']}")  # Debug
+
+        # Open post detail dialog with full post information
+        open_post_detail_dialog(
+            page=page,
+            post_data=post,
+            is_dark_mode=is_dark_mode,
         )
-        page.overlay.append(snack)
-        snack.open = True
-        page.update()
 
     # Search field with floating label (consistent with login page inputs)
     # Layout: [Search Button] [TextField (expand)] [Clear Button]
@@ -170,7 +206,9 @@ def search(page: ft.Page, is_dark_mode: bool = False):
         icon=ft.Icons.CLEAR,
         icon_size=AppTheme.ICON_SIZE_LG,
         icon_color=(
-            AppTheme.DARK_TEXT_SECONDARY if is_dark_mode else AppTheme.LIGHT_TEXT_SECONDARY
+            AppTheme.DARK_TEXT_SECONDARY
+            if is_dark_mode
+            else AppTheme.LIGHT_TEXT_SECONDARY
         ),
         tooltip="Limpar",
         disabled=True,  # Initially disabled until user types
@@ -180,11 +218,85 @@ def search(page: ft.Page, is_dark_mode: bool = False):
     # (Handlers defined above)
 
     def build_photo_grid():
-        """Build photo grid with responsive columns and lazy loading."""
+        """Build photo grid with responsive columns, loading, and empty states."""
         nonlocal photo_grid
 
+        # Loading state: show centered spinner
+        if is_loading:
+            return ft.Container(
+                content=ft.Column(
+                    [
+                        ft.ProgressRing(
+                            width=AppTheme.ICON_SIZE_XL * 2,
+                            height=AppTheme.ICON_SIZE_XL * 2,
+                            stroke_width=4,
+                            color=AppTheme.PRIMARY_GREEN,
+                        ),
+                        ft.Container(height=AppTheme.SPACING_MD),
+                        ft.Text(
+                            "Buscando publicações...",
+                            size=AppTheme.FONT_SIZE_BODY,
+                            color=(
+                                AppTheme.DARK_TEXT_SECONDARY
+                                if is_dark_mode
+                                else AppTheme.LIGHT_TEXT_SECONDARY
+                            ),
+                        ),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                expand=True,
+                alignment=ft.alignment.center,
+            )
+
+        # Empty state: no results found
+        if not filtered_posts:
+            return ft.Container(
+                content=ft.Column(
+                    [
+                        ft.Icon(
+                            ft.Icons.IMAGE_SEARCH,
+                            size=AppTheme.ICON_SIZE_XL * 2,
+                            color=(
+                                AppTheme.DARK_TEXT_TERTIARY
+                                if is_dark_mode
+                                else AppTheme.LIGHT_TEXT_TERTIARY
+                            ),
+                        ),
+                        ft.Container(height=AppTheme.SPACING_MD),
+                        ft.Text(
+                            "Nenhuma publicação encontrada",
+                            size=AppTheme.FONT_SIZE_SUBTITLE,
+                            weight=AppTheme.FONT_WEIGHT_MEDIUM,
+                            color=(
+                                AppTheme.DARK_TEXT_PRIMARY
+                                if is_dark_mode
+                                else AppTheme.LIGHT_TEXT_PRIMARY
+                            ),
+                        ),
+                        ft.Container(height=AppTheme.SPACING_XS),
+                        ft.Text(
+                            "Tente outra busca ou explore sem filtros",
+                            size=AppTheme.FONT_SIZE_BODY,
+                            color=(
+                                AppTheme.DARK_TEXT_SECONDARY
+                                if is_dark_mode
+                                else AppTheme.LIGHT_TEXT_SECONDARY
+                            ),
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                expand=True,
+                alignment=ft.alignment.center,
+            )
+
+        # Content state: build grid with filtered posts
         photo_items = []
-        for idx, post in enumerate(all_posts):
+        for idx, post in enumerate(filtered_posts):
             if post.get("image_path"):
                 # Create image container with tap handler
                 # Lazy loading: Images load when GridView renders them (Flet's default behavior)
@@ -233,11 +345,22 @@ def search(page: ft.Page, is_dark_mode: bool = False):
         )
         return photo_grid
 
+    def update_grid_in_content():
+        """Update the photo grid in the content container."""
+        nonlocal content_container, photo_grid
+        if content_container and content_container.content and photo_grid:
+            # Find the grid in the column and replace it
+            column = content_container.content
+            if isinstance(column, ft.Column) and len(column.controls) > 0:
+                # Grid is the last item in the column
+                column.controls[-1] = photo_grid
+                page.update()
+
     def on_page_resize(e):
         """Handle window resize to update grid columns."""
         nonlocal photo_grid, content_container
         changed = False
-        if photo_grid:
+        if photo_grid and isinstance(photo_grid, ft.GridView):
             ww = get_window_width()
             new_columns = get_responsive_columns(ww)
             if photo_grid.runs_count != new_columns:

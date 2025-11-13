@@ -77,6 +77,7 @@ class AppTheme:
     # SPACING & LAYOUT
     # ============================================================================
 
+    SPACING_XXS = 2  # Extra-extra-small: tight micro-spacing for dense layouts
     SPACING_XS = 4
     SPACING_SM = 8
     SPACING_MD = 16
@@ -124,6 +125,55 @@ class AppTheme:
 
     # Navigation badge
     BADGE_SIZE = 24  # Small badge for notification count
+
+    # ============================================================================
+    # DIALOG DIMENSIONS (Responsive)
+    # ============================================================================
+
+    # Dialog responsive sizes - three fixed breakpoints
+    DIALOG_WIDTH_SMALL = 400  # Mobile/compact devices
+    DIALOG_WIDTH_MEDIUM = 600  # Tablets/small desktops
+    DIALOG_WIDTH_LARGE = 800  # Large desktops
+
+    DIALOG_HEIGHT_SMALL = 500  # Compact dialogs
+    DIALOG_HEIGHT_MEDIUM = 600  # Standard dialogs
+    DIALOG_HEIGHT_LARGE = 700  # Extended content dialogs
+
+    # Dialog content constraints
+    DIALOG_CONTENT_MAX_HEIGHT_SMALL = 400  # Scrollable content height for small dialogs
+    DIALOG_CONTENT_MAX_HEIGHT_MEDIUM = (
+        500  # Scrollable content height for medium dialogs
+    )
+    DIALOG_CONTENT_MAX_HEIGHT_LARGE = 600  # Scrollable content height for large dialogs
+
+    # Dialog image heights
+    DIALOG_IMAGE_HEIGHT = 300
+    DIALOG_RELATED_IMAGE_HEIGHT = 150
+
+    # Dialog padding constants (standardized for all dialogs)
+    DIALOG_TITLE_PADDING = SPACING_SM  # Padding around dialog title row (8px)
+    DIALOG_CONTENT_PADDING = SPACING_MD  # Main content area padding (16px)
+    DIALOG_INSET_PADDING = SPACING_LG  # Internal component padding (24px)
+    DIALOG_ACTIONS_PADDING = SPACING_SM  # Actions button area padding (8px)
+
+    # ============================================================================
+    # COMPONENT-SPECIFIC SPACING
+    # ============================================================================
+
+    # Badge (notification count in navigation bar)
+    BADGE_BORDER_RADIUS = 10
+    BADGE_PADDING_HORIZONTAL = 5
+    BADGE_PADDING_VERTICAL = 2
+
+    # Tag chips (post cards, search filters)
+    TAG_PADDING_HORIZONTAL = 10
+    TAG_PADDING_VERTICAL = 5
+
+    # Comments
+    COMMENT_INDENT = 40  # Left indent for nested "view more" button
+
+    # Borders
+    BORDER_WIDTH_STANDARD = 2  # Standard border width for buttons, containers
 
     # ============================================================================
     # TEXT STYLES (Helper Functions)
@@ -325,6 +375,49 @@ class AppTheme:
             return 600
         else:
             return 800
+
+    @staticmethod
+    def get_responsive_dialog_size(window_width: int | None = None) -> tuple[int, int]:
+        """
+        Returns appropriate dialog width and height based on responsive breakpoints.
+
+        Three fixed size tiers:
+        - Small:  400px × 500px  (< 600px window width)
+        - Medium: 600px × 600px  (600-900px window width)
+        - Large:  800px × 700px  (> 900px window width)
+
+        Args:
+            window_width: Current window width in pixels (optional)
+
+        Returns:
+            tuple[int, int]: (dialog_width, dialog_height) in pixels
+        """
+        if window_width is None or window_width < 600:
+            return (AppTheme.DIALOG_WIDTH_SMALL, AppTheme.DIALOG_HEIGHT_SMALL)
+        elif window_width < 900:
+            return (AppTheme.DIALOG_WIDTH_MEDIUM, AppTheme.DIALOG_HEIGHT_MEDIUM)
+        else:
+            return (AppTheme.DIALOG_WIDTH_LARGE, AppTheme.DIALOG_HEIGHT_LARGE)
+
+    @staticmethod
+    def get_dialog_content_height(window_width: int | None = None) -> int:
+        """
+        Returns appropriate scrollable content height for dialogs based on breakpoints.
+
+        Ensures content area is scrollable within fixed dialog dimensions.
+
+        Args:
+            window_width: Current window width in pixels (optional)
+
+        Returns:
+            int: Maximum content height in pixels for scrollable area
+        """
+        if window_width is None or window_width < 600:
+            return AppTheme.DIALOG_CONTENT_MAX_HEIGHT_SMALL
+        elif window_width < 900:
+            return AppTheme.DIALOG_CONTENT_MAX_HEIGHT_MEDIUM
+        else:
+            return AppTheme.DIALOG_CONTENT_MAX_HEIGHT_LARGE
 
 
 # ============================================================================

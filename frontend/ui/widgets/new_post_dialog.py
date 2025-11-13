@@ -20,11 +20,16 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
         Whether to use dark theme styling
     """
 
-    def close_dialog(e):
+    # Fixed dialog width to match dashboard feed (CARD_WIDTH_STANDARD = 450px)
+    dialog_width = AppTheme.CARD_WIDTH_STANDARD
+    # Content height: leave room for title, actions, and padding
+    content_max_height = 400
+
+    def close_dialog(_):
         dialog.open = False
         page.update()
 
-    def add_photos_placeholder(e):
+    def add_photos_placeholder(_):
         # Placeholder for future photo upload functionality
         photo_status.value = "📸 Função de adicionar fotos em breve..."
         photo_status.color = (
@@ -34,7 +39,7 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
         )
         page.update()
 
-    def submit_post(e):
+    def submit_post(_):
         # Placeholder for post creation logic
         # Future: Send to backend API
         status_text.value = "Post criado com sucesso! ✓"
@@ -48,19 +53,21 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
         dialog.open = False
         page.update()
 
-    # Dialog fields
+    # Dialog fields - stretch to full dialog width (minus content padding)
+    field_width = dialog_width - (AppTheme.DIALOG_CONTENT_PADDING * 2)
+
     post_title = AppTheme.get_input_field(
         label="Título",
         hint_text="Ex: Bicicleta usada, Aula de violão...",
         is_dark_mode=is_dark_mode,
-        width=AppTheme.CARD_WIDTH_NARROW,
+        width=field_width,
     )
 
     post_description = AppTheme.get_input_field(
         label="Descrição",
         hint_text="Descreva o que você oferece ou procura",
         is_dark_mode=is_dark_mode,
-        width=AppTheme.CARD_WIDTH_NARROW,
+        width=field_width,
         multiline=True,
         min_lines=3,
         max_lines=5,
@@ -89,10 +96,10 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
             spacing=AppTheme.SPACING_SM,
         ),
         on_click=add_photos_placeholder,
-        border=ft.border.all(2, AppTheme.PRIMARY_GREEN),
+        border=ft.border.all(AppTheme.BORDER_WIDTH_STANDARD, AppTheme.PRIMARY_GREEN),
         border_radius=AppTheme.CARD_BORDER_RADIUS,
-        padding=AppTheme.SPACING_LG,
-        width=AppTheme.CARD_WIDTH_NARROW,
+        padding=AppTheme.DIALOG_INSET_PADDING,  # Use standardized dialog padding
+        width=field_width,  # Match input field width for consistency
         ink=True,
     )
 
@@ -104,17 +111,27 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
             "Criar Nova Publicação",
             size=AppTheme.FONT_SIZE_TITLE,
             weight=AppTheme.FONT_WEIGHT_BOLD,
-            color=AppTheme.DARK_TEXT_PRIMARY if is_dark_mode else AppTheme.LIGHT_TEXT_PRIMARY,
+            color=(
+                AppTheme.DARK_TEXT_PRIMARY
+                if is_dark_mode
+                else AppTheme.LIGHT_TEXT_PRIMARY
+            ),
         ),
-        content=ft.Column(
-            [
-                post_title,
-                post_description,
-                add_photos_button,
-                status_text,
-            ],
-            tight=True,
-            spacing=AppTheme.SPACING_MD,
+        content=ft.Container(
+            content=ft.Column(
+                [
+                    post_title,
+                    post_description,
+                    add_photos_button,
+                    status_text,
+                ],
+                tight=True,
+                spacing=AppTheme.DIALOG_CONTENT_PADDING,
+                scroll=ft.ScrollMode.AUTO,
+                height=content_max_height,
+            ),
+            width=dialog_width,
+            padding=AppTheme.DIALOG_CONTENT_PADDING,  # Standardized content padding
         ),
         actions=[
             AppTheme.get_text_button("Cancelar", close_dialog, is_dark_mode),

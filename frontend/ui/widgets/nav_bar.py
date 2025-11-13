@@ -84,8 +84,11 @@ def create_nav_bar(
                         weight=AppTheme.FONT_WEIGHT_BOLD,
                     ),
                     bgcolor=AppTheme.ERROR,
-                    border_radius=ft.border_radius.all(10),
-                    padding=ft.padding.symmetric(horizontal=5, vertical=2),
+                    border_radius=ft.border_radius.all(AppTheme.BADGE_BORDER_RADIUS),
+                    padding=ft.padding.symmetric(
+                        horizontal=AppTheme.BADGE_PADDING_HORIZONTAL,
+                        vertical=AppTheme.BADGE_PADDING_VERTICAL,
+                    ),
                     alignment=ft.alignment.center,
                     top=0,
                     right=0,

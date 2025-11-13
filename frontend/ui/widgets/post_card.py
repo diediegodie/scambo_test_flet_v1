@@ -74,7 +74,7 @@ def PostCard(
                         ),
                     ),
                 ],
-                spacing=2,
+                spacing=AppTheme.SPACING_XXS,
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
             ),
@@ -136,7 +136,10 @@ def PostCard(
                     weight=AppTheme.FONT_WEIGHT_MEDIUM,
                 ),
                 bgcolor=AppTheme.PRIMARY_GREEN,
-                padding=ft.padding.symmetric(horizontal=10, vertical=5),
+                padding=ft.padding.symmetric(
+                    horizontal=AppTheme.TAG_PADDING_HORIZONTAL,
+                    vertical=AppTheme.TAG_PADDING_VERTICAL,
+                ),
                 border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
             )
             for tag in tags
@@ -211,7 +214,7 @@ def PostCard(
                                 ),
                             ),
                         ],
-                        spacing=2,
+                        spacing=AppTheme.SPACING_XXS,
                         expand=True,
                     ),
                 ],
@@ -229,7 +232,9 @@ def PostCard(
             comment_widgets.append(
                 ft.Container(
                     content=view_more_btn,
-                    padding=ft.padding.only(left=40, top=AppTheme.SPACING_XS),
+                    padding=ft.padding.only(
+                        left=AppTheme.COMMENT_INDENT, top=AppTheme.SPACING_XS
+                    ),
                 )
             )
 

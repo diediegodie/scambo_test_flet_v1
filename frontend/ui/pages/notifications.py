@@ -83,7 +83,7 @@ def notifications(page: ft.Page, is_dark_mode: bool = False):
             # Rebuild list to reflect changes
             refresh_notifications()
 
-    def handle_mark_all_read(e):
+    def handle_mark_all_read(_):
         """Mark all unread notifications as read."""
         unread_count = sum(1 for n in notifications_data if not n["read"])
 
@@ -204,7 +204,7 @@ def notifications(page: ft.Page, is_dark_mode: bool = False):
                         [
                             ft.Icon(
                                 ft.Icons.NOTIFICATIONS_NONE,
-                                size=64,
+                                size=AppTheme.ICON_SIZE_XL * 2,  # 80px empty state icon
                                 color=(
                                     AppTheme.DARK_TEXT_TERTIARY
                                     if is_dark_mode

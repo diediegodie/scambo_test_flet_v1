@@ -46,6 +46,11 @@ def open_notification_detail_dialog(
         Whether to use dark theme styling
     """
 
+    # Fixed dialog width to match dashboard feed (CARD_WIDTH_STANDARD = 450px)
+    dialog_width = AppTheme.CARD_WIDTH_STANDARD
+    # Content height: leave room for title, actions, and padding
+    content_max_height = 500
+
     notification_id = notification_data.get("id")
     notification_type = notification_data.get("type", "system")
     message = notification_data.get("message", "")
@@ -72,12 +77,12 @@ def open_notification_detail_dialog(
         (ft.Icons.NOTIFICATIONS, AppTheme.PRIMARY_GREEN, "Notificação"),
     )
 
-    def close_dialog(e):
+    def close_dialog(_):
         """Close dialog handler."""
         dialog.open = False
         page.update()
 
-    def mark_as_read_handler(e):
+    def mark_as_read_handler(_):
         """Mark notification as read and close dialog."""
         # Call the callback to update notification state
         on_mark_read(notification_id)
@@ -136,22 +141,24 @@ def open_notification_detail_dialog(
                     spacing=AppTheme.SPACING_XS,
                 ),
             ],
-            spacing=AppTheme.SPACING_MD,
+            spacing=AppTheme.DIALOG_CONTENT_PADDING,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        )
-
-    # Message section
+        )  # Message section
     message_section = ft.Container(
         content=ft.Text(
             message,
             size=AppTheme.FONT_SIZE_BODY,
+            # No max_lines - allow natural text wrapping in scrollable content
             color=(
                 AppTheme.DARK_TEXT_PRIMARY
                 if is_dark_mode
                 else AppTheme.LIGHT_TEXT_PRIMARY
             ),
         ),
-        padding=ft.padding.only(top=AppTheme.SPACING_MD, bottom=AppTheme.SPACING_SM),
+        padding=ft.padding.only(
+            top=AppTheme.DIALOG_CONTENT_PADDING,
+            bottom=AppTheme.DIALOG_TITLE_PADDING,
+        ),
     )
 
     # Timestamp section
@@ -199,17 +206,22 @@ def open_notification_detail_dialog(
 
         # Add image if available
         if related_image:
+            # Calculate responsive image width (dialog width minus content padding on both sides)
+            responsive_image_width = dialog_width - (
+                AppTheme.DIALOG_CONTENT_PADDING * 2
+            )
             related_widgets.append(
                 ft.Container(
                     content=ft.Image(
                         src=related_image,
-                        width=AppTheme.CARD_WIDTH_NARROW - 40,
-                        height=150,
+                        width=responsive_image_width,
+                        height=AppTheme.DIALOG_RELATED_IMAGE_HEIGHT,
                         fit=ft.ImageFit.COVER,
-                        border_radius=ft.border_radius.all(AppTheme.SPACING_SM),
+                        border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
                     ),
-                    margin=ft.margin.only(
-                        top=AppTheme.SPACING_SM, bottom=AppTheme.SPACING_SM
+                    padding=ft.padding.only(
+                        top=AppTheme.DIALOG_TITLE_PADDING,
+                        bottom=AppTheme.DIALOG_TITLE_PADDING,
                     ),
                 )
             )
@@ -224,8 +236,7 @@ def open_notification_detail_dialog(
                     if is_dark_mode
                     else AppTheme.LIGHT_TEXT_SECONDARY
                 ),
-                max_lines=3,
-                overflow=ft.TextOverflow.ELLIPSIS,
+                # No max_lines - allow full content to display with scroll
             )
         )
 
@@ -287,14 +298,18 @@ def open_notification_detail_dialog(
                     ),
                 ),
             ],
-            spacing=AppTheme.SPACING_SM,
+            spacing=AppTheme.DIALOG_TITLE_PADDING,
         ),
-        content=ft.Column(
-            controls=dialog_content_widgets,
-            tight=True,
-            spacing=AppTheme.SPACING_SM,
-            scroll=ft.ScrollMode.AUTO,
-            height=400,  # Max height to prevent overflow
+        content=ft.Container(
+            content=ft.Column(
+                controls=dialog_content_widgets,
+                tight=True,
+                spacing=AppTheme.DIALOG_TITLE_PADDING,
+                scroll=ft.ScrollMode.AUTO,
+                height=content_max_height,
+            ),
+            width=dialog_width,
+            padding=AppTheme.DIALOG_CONTENT_PADDING,  # Standardized content padding
         ),
         actions=action_buttons,
         actions_alignment=ft.MainAxisAlignment.END,

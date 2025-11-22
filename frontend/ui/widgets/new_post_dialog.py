@@ -28,6 +28,8 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
     def close_dialog(_):
         dialog.open = False
         page.update()
+        # Restore previous keyboard handler if any
+        page.on_keyboard_event = previous_keyboard_handler
 
     def add_photos_placeholder(_):
         # Placeholder for future photo upload functionality
@@ -143,4 +145,17 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
 
     page.overlay.append(dialog)
     dialog.open = True
+    # Temporary keyboard handler to close dialog on Escape
+    previous_keyboard_handler = page.on_keyboard_event
+
+    def _escape_handler(e: ft.KeyboardEvent):
+        if e.key == "Escape":
+            dialog.open = False
+            page.update()
+            page.on_keyboard_event = previous_keyboard_handler
+        elif previous_keyboard_handler:
+            # Delegate to previous handler for other keys
+            previous_keyboard_handler(e)
+
+    page.on_keyboard_event = _escape_handler
     page.update()

@@ -114,6 +114,17 @@ def get_mock_posts() -> List[Dict[str, Any]]:
             "tags": ["serviços", "escritório", "organização"],
             "image_path": "frontend/assets/img_placeholder.png",
         },
+        # Additional Diego post (profile feed demonstration)
+        {
+            "author_name": "Diego",
+            "avatar_bg": "#4CAF50",
+            "avatar_text": "D",
+            "post_title": "Sessões de revisão de código",
+            "post_description": "Ofereço 3 sessões (1h cada) de revisão de código Python/FastAPI em troca de livros técnicos (Clean Architecture, Effective Python) ou suporte VESA para monitor.",
+            "post_date": "3 semanas atrás",
+            "tags": ["educação", "programação", "troca"],
+            "image_path": "frontend/assets/img_placeholder.png",
+        },
     ]
 
 
@@ -136,12 +147,12 @@ def count_user_posts(author_name: str) -> int:
 
 def get_unique_categories() -> List[str]:
     """Extract all unique categories/tags from mock posts.
-    
+
     Returns
     -------
     List[str]
         Sorted list of unique category names
-    
+
     Backend migration:
     - Replace with: GET /api/categories
     """
@@ -156,10 +167,10 @@ def get_paginated_posts(
     page: int = 1,
     page_size: int = 6,
     search_query: str | None = None,
-    category_filter: str | None = None
+    category_filter: str | None = None,
 ) -> Dict[str, Any]:
     """Get paginated posts with optional search and category filtering.
-    
+
     Parameters
     ----------
     page : int
@@ -170,7 +181,7 @@ def get_paginated_posts(
         Search term to filter by title, description, or tags (None = no search)
     category_filter : str | None
         Category to filter by (matches against tags)
-    
+
     Returns
     -------
     Dict[str, Any]
@@ -180,37 +191,37 @@ def get_paginated_posts(
         - page: Current page number
         - page_size: Posts per page
         - has_more: Boolean indicating if more pages exist
-    
+
     Backend migration:
     - Replace with: GET /api/posts?page={page}&size={page_size}&q={search_query}&category={category_filter}
     """
     all_posts = get_mock_posts()
-    
+
     # Apply search filter
     if search_query:
         query_lower = search_query.lower()
         all_posts = [
-            post for post in all_posts
+            post
+            for post in all_posts
             if query_lower in post["post_title"].lower()
             or query_lower in post["post_description"].lower()
             or any(query_lower in tag.lower() for tag in post.get("tags", []))
         ]
-    
+
     # Apply category filter
     if category_filter:
         all_posts = [
-            post for post in all_posts
-            if category_filter in post.get("tags", [])
+            post for post in all_posts if category_filter in post.get("tags", [])
         ]
-    
+
     # Calculate pagination
     total = len(all_posts)
     start_idx = (page - 1) * page_size
     end_idx = start_idx + page_size
-    
+
     paginated_posts = all_posts[start_idx:end_idx]
     has_more = end_idx < total
-    
+
     return {
         "posts": paginated_posts,
         "total": total,

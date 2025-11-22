@@ -60,6 +60,7 @@ def open_post_detail_dialog(
         """Close dialog handler."""
         dialog.open = False
         page.update()
+        page.on_keyboard_event = previous_keyboard_handler
 
     # Author section with avatar
     author_avatar = ft.CircleAvatar(
@@ -279,4 +280,16 @@ def open_post_detail_dialog(
     # Show dialog
     page.overlay.append(dialog)
     dialog.open = True
+    # Store previous keyboard handler and apply Escape-to-close behavior
+    previous_keyboard_handler = page.on_keyboard_event
+
+    def _escape_handler(e: ft.KeyboardEvent):
+        if e.key == "Escape":
+            dialog.open = False
+            page.update()
+            page.on_keyboard_event = previous_keyboard_handler
+        elif previous_keyboard_handler:
+            previous_keyboard_handler(e)
+
+    page.on_keyboard_event = _escape_handler
     page.update()

@@ -6,9 +6,11 @@
 import flet as ft
 from ..widgets.new_post_dialog import open_new_post_dialog
 from ..widgets.nav_bar import create_nav_bar
+from ..widgets.post_card import PostCard
 from ..theme import AppTheme
 from mock.user import get_current_user
-from mock.posts import count_user_posts
+from mock.posts import count_user_posts, get_mock_posts
+from mock.comments import get_mock_comments
 
 
 def perfil(page: ft.Page, is_dark_mode: bool = False):
@@ -192,8 +194,35 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
         height=AppTheme.BUTTON_HEIGHT,
     )
 
-    # Main content card (centered like login/create account)
-    content_card = ft.Card(
+    # Build user-specific posts (filter by author_name == current user name)
+    user_posts = [p for p in get_mock_posts() if p.get("author_name") == user["name"]]
+
+    user_post_cards: list[ft.Control] = []
+    for idx, mp in enumerate(user_posts):
+        avatar = ft.CircleAvatar(
+            bgcolor=mp["avatar_bg"],
+            content=ft.Text(mp["avatar_text"], color=AppTheme.TEXT_ON_COLORED_BG),
+        )
+        post_comments = get_mock_comments(idx)  # Reuse mock comments (index as id)
+        user_post_cards.append(
+            ft.Container(
+                alignment=ft.alignment.center,
+                content=PostCard(
+                    author_name=mp["author_name"],
+                    author_avatar=avatar,
+                    post_title=mp["post_title"],
+                    post_description=mp["post_description"],
+                    post_date=mp["post_date"],
+                    image_path=mp.get("image_path"),
+                    tags=mp.get("tags"),
+                    comments=post_comments,
+                    is_dark_mode=is_dark_mode,
+                ),
+            )
+        )
+
+    # Main profile summary card (top section)
+    profile_summary_card = ft.Card(
         elevation=AppTheme.CARD_ELEVATION,
         color=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
         content=ft.Container(
@@ -203,6 +232,24 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
                     AppTheme.get_divider(is_dark_mode),
                     stats_row,
                     novo_button,
+                    # Posts section header only shown if user has posts
+                    *(
+                        [
+                            AppTheme.get_divider(is_dark_mode),
+                            ft.Text(
+                                "Minhas publicações",
+                                size=AppTheme.FONT_SIZE_SUBTITLE,
+                                weight=AppTheme.FONT_WEIGHT_MEDIUM,
+                                color=(
+                                    AppTheme.DARK_TEXT_PRIMARY
+                                    if is_dark_mode
+                                    else AppTheme.LIGHT_TEXT_PRIMARY
+                                ),
+                            ),
+                        ]
+                        if user_posts
+                        else []
+                    ),
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -212,6 +259,27 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
             width=AppTheme.CARD_WIDTH_PROFILE,
             border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
         ),
+    )
+
+    # Build a constrained, centered vertical layout (same sizing pattern as original profile page)
+    # We use a Column with scroll inside a fixed-width Container to prevent full-window stretching.
+    profile_content_controls: list[ft.Control] = [profile_summary_card]
+    if user_post_cards:
+        profile_content_controls.extend(user_post_cards)
+
+    profile_scroll_column = ft.Column(
+        controls=profile_content_controls,
+        spacing=AppTheme.SPACING_MD,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        alignment=ft.MainAxisAlignment.START,
+        expand=True,
+        scroll=ft.ScrollMode.AUTO,
+    )
+
+    centered_profile_container = ft.Container(
+        width=AppTheme.CARD_WIDTH_PROFILE,
+        content=profile_scroll_column,
+        alignment=ft.alignment.top_center,
     )
 
     # Get reusable navigation bar
@@ -224,7 +292,7 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
         ft.Column(
             [
                 ft.Container(
-                    content=content_card,
+                    content=centered_profile_container,
                     expand=True,
                     alignment=ft.alignment.center,
                 ),

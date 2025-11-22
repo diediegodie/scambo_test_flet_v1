@@ -81,6 +81,7 @@ def open_notification_detail_dialog(
         """Close dialog handler."""
         dialog.open = False
         page.update()
+        page.on_keyboard_event = previous_keyboard_handler
 
     def mark_as_read_handler(_):
         """Mark notification as read and close dialog."""
@@ -320,4 +321,16 @@ def open_notification_detail_dialog(
     # Show dialog
     page.overlay.append(dialog)
     dialog.open = True
+    # Escape key support: temporarily override keyboard handler
+    previous_keyboard_handler = page.on_keyboard_event
+
+    def _escape_handler(e: ft.KeyboardEvent):
+        if e.key == "Escape":
+            dialog.open = False
+            page.update()
+            page.on_keyboard_event = previous_keyboard_handler
+        elif previous_keyboard_handler:
+            previous_keyboard_handler(e)
+
+    page.on_keyboard_event = _escape_handler
     page.update()

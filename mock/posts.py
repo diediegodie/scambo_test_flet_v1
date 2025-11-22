@@ -132,3 +132,89 @@ def count_user_posts(author_name: str) -> int:
     """
     posts = get_mock_posts()
     return sum(1 for post in posts if post["author_name"] == author_name)
+
+
+def get_unique_categories() -> List[str]:
+    """Extract all unique categories/tags from mock posts.
+    
+    Returns
+    -------
+    List[str]
+        Sorted list of unique category names
+    
+    Backend migration:
+    - Replace with: GET /api/categories
+    """
+    posts = get_mock_posts()
+    categories = set()
+    for post in posts:
+        categories.update(post.get("tags", []))
+    return sorted(list(categories))
+
+
+def get_paginated_posts(
+    page: int = 1,
+    page_size: int = 6,
+    search_query: str | None = None,
+    category_filter: str | None = None
+) -> Dict[str, Any]:
+    """Get paginated posts with optional search and category filtering.
+    
+    Parameters
+    ----------
+    page : int
+        Page number (1-indexed)
+    page_size : int
+        Number of posts per page
+    search_query : str | None
+        Search term to filter by title, description, or tags (None = no search)
+    category_filter : str | None
+        Category to filter by (matches against tags)
+    
+    Returns
+    -------
+    Dict[str, Any]
+        Dictionary containing:
+        - posts: List of post dicts for current page
+        - total: Total number of posts matching filters
+        - page: Current page number
+        - page_size: Posts per page
+        - has_more: Boolean indicating if more pages exist
+    
+    Backend migration:
+    - Replace with: GET /api/posts?page={page}&size={page_size}&q={search_query}&category={category_filter}
+    """
+    all_posts = get_mock_posts()
+    
+    # Apply search filter
+    if search_query:
+        query_lower = search_query.lower()
+        all_posts = [
+            post for post in all_posts
+            if query_lower in post["post_title"].lower()
+            or query_lower in post["post_description"].lower()
+            or any(query_lower in tag.lower() for tag in post.get("tags", []))
+        ]
+    
+    # Apply category filter
+    if category_filter:
+        all_posts = [
+            post for post in all_posts
+            if category_filter in post.get("tags", [])
+        ]
+    
+    # Calculate pagination
+    total = len(all_posts)
+    start_idx = (page - 1) * page_size
+    end_idx = start_idx + page_size
+    
+    paginated_posts = all_posts[start_idx:end_idx]
+    has_more = end_idx < total
+    
+    return {
+        "posts": paginated_posts,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "has_more": has_more,
+    }

@@ -51,6 +51,24 @@ class AppTheme:
     HOVER_OVERLAY_LIGHT = "#00000010"  # 10% black overlay
     HOVER_OVERLAY_DARK = "#FFFFFF10"  # 10% white overlay
 
+    # ============================================================================
+    # ANIMATIONS & TRANSITIONS
+    # ============================================================================
+
+    # Animation Durations (in milliseconds)
+    ANIMATION_DURATION_FAST = 200  # Fast transitions (hover effects, scale)
+    ANIMATION_DURATION_MEDIUM = 300  # Medium transitions (dialogs, sheets)
+    ANIMATION_DURATION_SLOW = 500  # Slow transitions (page transitions)
+
+    # Photo Grid Hover Effects
+    PHOTO_HOVER_SCALE = 1.05  # Scale factor on hover (5% enlargement)
+    PHOTO_HOVER_SHADOW_BLUR = 8  # Shadow blur radius on hover
+    PHOTO_HOVER_SHADOW_SPREAD = 2  # Shadow spread radius on hover
+    PHOTO_HOVER_SHADOW_OFFSET_Y = 4  # Shadow vertical offset on hover
+    PHOTO_DEFAULT_SHADOW_COLOR = "#00000000"  # Transparent shadow (default state)
+    PHOTO_HOVER_SHADOW_COLOR_LIGHT = "#00000030"  # 30% black shadow (light mode hover)
+    PHOTO_HOVER_SHADOW_COLOR_DARK = "#00000050"  # 50% black shadow (dark mode hover)
+
     # NavigationBar Colors (lighter for better readability)
     NAV_ICON_LIGHT = "#495057"  # Lighter than primary text for subtle icons
     NAV_ICON_DARK = "#C9D1D9"  # Lighter than primary text in dark mode

@@ -292,7 +292,7 @@ class AppTheme:
             height: Optional height override
         """
         return ft.ElevatedButton(
-            text=text,
+            content=text,
             on_click=on_click,
             width=width,
             height=height,
@@ -314,7 +314,7 @@ class AppTheme:
             is_dark_mode: Whether to use dark theme styling
         """
         return ft.TextButton(
-            text=text,
+            content=text,
             on_click=on_click,
             style=ft.ButtonStyle(color=AppTheme.PRIMARY_GREEN),
         )
@@ -456,8 +456,6 @@ def get_light_theme():
             on_secondary="#FFFFFF",
             surface=AppTheme.LIGHT_SURFACE,
             on_surface=AppTheme.LIGHT_TEXT_PRIMARY,
-            background=AppTheme.LIGHT_BACKGROUND,
-            on_background=AppTheme.LIGHT_TEXT_PRIMARY,
             error=AppTheme.ERROR,
             on_error="#FFFFFF",
         ),
@@ -479,8 +477,6 @@ def get_dark_theme():
             on_secondary="#FFFFFF",
             surface=AppTheme.DARK_SURFACE,
             on_surface=AppTheme.DARK_TEXT_PRIMARY,
-            background=AppTheme.DARK_BACKGROUND,
-            on_background=AppTheme.DARK_TEXT_PRIMARY,
             error=AppTheme.ERROR,
             on_error="#FFFFFF",
         ),

@@ -206,7 +206,7 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
         post_comments = get_mock_comments(idx)  # Reuse mock comments (index as id)
         user_post_cards.append(
             ft.Container(
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
                 content=PostCard(
                     author_name=mp["author_name"],
                     author_avatar=avatar,
@@ -224,7 +224,6 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
     # Main profile summary card (top section)
     profile_summary_card = ft.Card(
         elevation=AppTheme.CARD_ELEVATION,
-        color=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
         content=ft.Container(
             content=ft.Column(
                 [
@@ -257,6 +256,7 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
             ),
             padding=AppTheme.SPACING_XL + 8,  # 40px
             width=AppTheme.CARD_WIDTH_PROFILE,
+            bgcolor=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
             border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
         ),
     )
@@ -279,7 +279,7 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
     centered_profile_container = ft.Container(
         width=AppTheme.CARD_WIDTH_PROFILE,
         content=profile_scroll_column,
-        alignment=ft.alignment.top_center,
+        alignment=ft.Alignment.CENTER,
     )
 
     # Get reusable navigation bar
@@ -294,7 +294,7 @@ def perfil(page: ft.Page, is_dark_mode: bool = False):
                 ft.Container(
                     content=centered_profile_container,
                     expand=True,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 nav,
             ],

@@ -25,20 +25,12 @@ def index(page: ft.Page, is_dark_mode: bool = False):
 
     # Navigation handlers
     def go_to_login(_):
-        # Get current theme from client storage or use passed value
-        current_dark_mode = page.client_storage.get("is_dark_mode")
-        if current_dark_mode is None:
-            current_dark_mode = is_dark_mode
         page.clean()
-        login_page(page, current_dark_mode)
+        login_page(page, is_dark_mode)
 
     def go_to_create_account(_):
-        # Get current theme from client storage or use passed value
-        current_dark_mode = page.client_storage.get("is_dark_mode")
-        if current_dark_mode is None:
-            current_dark_mode = is_dark_mode
         page.clean()
-        create_account(page, current_dark_mode)
+        create_account(page, is_dark_mode)
 
     # Logo
     logo = ft.Text(
@@ -60,7 +52,7 @@ def index(page: ft.Page, is_dark_mode: bool = False):
                 height=AppTheme.BUTTON_HEIGHT,
             ),
             ft.OutlinedButton(
-                text="Criar Conta",
+                content="Criar Conta",
                 width=AppTheme.LANDING_BUTTON_WIDTH,
                 height=AppTheme.BUTTON_HEIGHT,
                 on_click=go_to_create_account,

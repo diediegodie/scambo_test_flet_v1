@@ -33,9 +33,6 @@ def configurations(page: ft.Page, is_dark_mode: bool = False):
         # Toggle the theme state
         new_dark_mode = not is_dark_mode
         
-        # Store theme preference in client storage for persistence
-        page.client_storage.set("is_dark_mode", new_dark_mode)
-        
         # Update page theme
         page.theme = get_dark_theme() if new_dark_mode else get_light_theme()
         page.bgcolor = (

@@ -34,39 +34,34 @@ def create_nav_bar(
         """Handle navigation between pages."""
         selected = e.control.selected_index
 
-        # Get current theme from client storage or use passed value
-        current_dark_mode = page.client_storage.get("is_dark_mode")
-        if current_dark_mode is None:
-            current_dark_mode = is_dark_mode
-
         if selected == 0:  # Início
             from ..pages.dashboard import dashboard
 
             page.clean()
-            dashboard(page, current_dark_mode)
+            dashboard(page, is_dark_mode)
         elif selected == 1:  # Novo
             # Open new post dialog directly without navigation
-            open_new_post_dialog(page, current_dark_mode)
+            open_new_post_dialog(page, is_dark_mode)
         elif selected == 2:  # Perfil
             from ..pages.perfil import perfil
 
             page.clean()
-            perfil(page, current_dark_mode)
+            perfil(page, is_dark_mode)
         elif selected == 3:  # Buscar
             from ..pages.search import search
 
             page.clean()
-            search(page, current_dark_mode)
+            search(page, is_dark_mode)
         elif selected == 4:  # Notificações
             from ..pages.notifications import notifications
 
             page.clean()
-            notifications(page, current_dark_mode)
+            notifications(page, is_dark_mode)
         elif selected == 5:  # Configurações
             from ..pages.configurations import configurations
 
             page.clean()
-            configurations(page, current_dark_mode)
+            configurations(page, is_dark_mode)
 
     # Get notifications count for badge
     notifications_count = get_mock_notifications_count()

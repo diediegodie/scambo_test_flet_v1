@@ -52,13 +52,9 @@ def main(page: ft.Page, is_dark_mode: bool = False):
 
     # Login button
     def login_click(e):
-        # Get current theme from client storage or use passed value
-        current_dark_mode = page.client_storage.get("is_dark_mode")
-        if current_dark_mode is None:
-            current_dark_mode = is_dark_mode
         # Here you can validate and redirect to the dashboard
         page.clean()
-        dashboard(page, current_dark_mode)
+        dashboard(page, is_dark_mode)
 
     login_btn = AppTheme.get_elevated_button(
         text="Entrar",
@@ -69,12 +65,8 @@ def main(page: ft.Page, is_dark_mode: bool = False):
 
     # Create account link
     def go_to_create_account(e):
-        # Get current theme from client storage or use passed value
-        current_dark_mode = page.client_storage.get("is_dark_mode")
-        if current_dark_mode is None:
-            current_dark_mode = is_dark_mode
         page.clean()
-        create_account(page, current_dark_mode)
+        create_account(page, is_dark_mode)
 
     create_account_link = AppTheme.get_text_button(
         text="Criar uma conta",
@@ -85,7 +77,6 @@ def main(page: ft.Page, is_dark_mode: bool = False):
     # Central card
     login_card = ft.Card(
         elevation=AppTheme.CARD_ELEVATION,
-        color=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
         content=ft.Container(
             content=ft.Column(
                 [logo, email, password, login_btn, create_account_link],
@@ -95,6 +86,7 @@ def main(page: ft.Page, is_dark_mode: bool = False):
             ),
             padding=AppTheme.SPACING_XL,
             width=AppTheme.CARD_WIDTH_NARROW,
+            bgcolor=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
             border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
         ),
     )

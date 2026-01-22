@@ -32,14 +32,14 @@ def configurations(page: ft.Page, is_dark_mode: bool = False):
         """Toggle between dark and light themes and refresh the page."""
         # Toggle the theme state
         new_dark_mode = not is_dark_mode
-        
+
         # Update page theme
         page.theme = get_dark_theme() if new_dark_mode else get_light_theme()
         page.bgcolor = (
             AppTheme.DARK_BACKGROUND if new_dark_mode else AppTheme.LIGHT_BACKGROUND
         )
         page.update()
-        
+
         # Reload the configurations page with new theme
         page.clean()
         configurations(page, new_dark_mode)
@@ -95,7 +95,11 @@ def configurations(page: ft.Page, is_dark_mode: bool = False):
                     size=AppTheme.ICON_SIZE_LG,
                 ),
                 ft.Text(
-                    "Alternar para modo claro" if is_dark_mode else "Alternar para modo escuro",
+                    (
+                        "Alternar para modo claro"
+                        if is_dark_mode
+                        else "Alternar para modo escuro"
+                    ),
                     size=AppTheme.FONT_SIZE_BODY,
                     weight=AppTheme.FONT_WEIGHT_MEDIUM,
                     color=(

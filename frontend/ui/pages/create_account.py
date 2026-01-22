@@ -89,6 +89,7 @@ def create_account(page: ft.Page, is_dark_mode: bool = False):
     # Optional: back to login link
     def go_to_login(e):
         from frontend.ui.pages.login import main as login_page_main
+
         page.clean()
         login_page_main(page, is_dark_mode)
 

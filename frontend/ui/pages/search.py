@@ -646,7 +646,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     [
                         ft.ProgressRing(
                             width=AppTheme.ICON_SIZE_MD,
-                            height=AppTheme.ICON_SIZE_MD,
+                            height=AppTheme.ICON_SIZE_MDpython3 run_,
                             stroke_width=2,
                             color=AppTheme.PRIMARY_GREEN,
                             visible=is_loading_more,

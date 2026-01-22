@@ -20,7 +20,7 @@ def main(page: ft.Page):
     if is_dark_mode is None:
         is_dark_mode = False  # Default to light mode
         page.client_storage.set("is_dark_mode", is_dark_mode)
-    
+
     # Set theme based on preference
     page.theme = get_dark_theme() if is_dark_mode else get_light_theme()
 

@@ -9,7 +9,6 @@ import flet as ft
 from typing import List
 from ..theme import AppTheme
 
-
 def PostCard(
     author_name: str,
     author_avatar: ft.CircleAvatar,
@@ -91,7 +90,7 @@ def PostCard(
                 src=image_path,
                 width=card_width - 30,  # Account for card padding
                 height=AppTheme.POST_IMAGE_HEIGHT,
-                fit=ft.ImageFit.COVER,
+                fit=ft.BoxFit.COVER,
                 border_radius=ft.border_radius.all(AppTheme.SPACING_SM),
             ),
             margin=ft.margin.only(top=AppTheme.SPACING_SM, bottom=AppTheme.SPACING_SM),
@@ -145,7 +144,7 @@ def PostCard(
             for tag in tags
         ]
         tags_row = ft.Row(
-            controls=tag_chips,
+            controls=tag_chips,  # type: ignore
             spacing=AppTheme.SPACING_SM,
             wrap=True,
         )
@@ -226,8 +225,10 @@ def PostCard(
         # Add "View more" button if there are more than 3 comments
         if len(comments) > 3:
             view_more_btn = ft.TextButton(
-                text=f"Ver mais {len(comments) - 3} comentário(s)",
-                style=ft.ButtonStyle(color=AppTheme.PRIMARY_GREEN),
+                content=ft.Text(
+                    f"Ver mais {len(comments) - 3} comentário(s)",
+                    color=AppTheme.PRIMARY_GREEN,
+                ),
             )
             comment_widgets.append(
                 ft.Container(
@@ -275,9 +276,9 @@ def PostCard(
     return ft.Card(
         elevation=AppTheme.CARD_ELEVATION,
         width=card_width,
-        color=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
         content=ft.Container(
             padding=AppTheme.SPACING_MD,
+            bgcolor=AppTheme.DARK_SURFACE if is_dark_mode else AppTheme.LIGHT_SURFACE,
             content=ft.Column(
                 card_elements,
                 spacing=AppTheme.SPACING_MD,

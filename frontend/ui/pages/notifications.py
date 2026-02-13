@@ -233,7 +233,7 @@ def notifications(page: ft.Page, is_dark_mode: bool = False):
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         spacing=AppTheme.SPACING_MD,
                     ),
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                     expand=True,
                 )
             )
@@ -319,7 +319,7 @@ def notifications(page: ft.Page, is_dark_mode: bool = False):
                 ft.Container(
                     content=content_container,
                     expand=True,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 nav,
             ],

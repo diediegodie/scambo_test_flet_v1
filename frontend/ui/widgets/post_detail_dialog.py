@@ -148,7 +148,7 @@ def open_post_detail_dialog(
             content=ft.Image(
                 src=image_path,
                 width=responsive_image_width,
-                fit=ft.ImageFit.COVER,
+                fit=ft.BoxFit.COVER,
                 border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
                 error_content=ft.Icon(
                     ft.Icons.BROKEN_IMAGE,

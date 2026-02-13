@@ -39,7 +39,7 @@ def dashboard(page: ft.Page, is_dark_mode: bool = False):
 
         feed_cards.append(
             ft.Container(
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
                 content=PostCard(
                     author_name=mp["author_name"],
                     author_avatar=avatar,

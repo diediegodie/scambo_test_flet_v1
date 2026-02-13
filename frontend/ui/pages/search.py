@@ -44,8 +44,12 @@ def search(page: ft.Page, is_dark_mode: bool = False):
 
     # State management
     search_query = ""
-    all_posts = get_mock_posts()  # Keep for backward compatibility (not used with pagination)
-    filtered_posts = []  # Posts after filtering by search query (cumulative with pagination)
+    _all_posts = (
+        get_mock_posts()
+    )  # Keep for backward compatibility (not used with pagination)
+    filtered_posts = (
+        []
+    )  # Posts after filtering by search query (cumulative with pagination)
     is_loading = False  # Loading state for async operations
     photo_grid = None  # Will be initialized after calculating columns
     content_container = None  # Will be initialized after creation
@@ -53,9 +57,11 @@ def search(page: ft.Page, is_dark_mode: bool = False):
     search_btn = None  # Left action button
     clear_btn = None  # Right clear button
     debounce_timer = None  # Timer for debouncing search input
-    selected_photo_index = -1  # Current focused photo index for keyboard navigation (-1 = none)
+    selected_photo_index = (
+        -1
+    )  # Current focused photo index for keyboard navigation (-1 = none)
     photo_containers = []  # List of photo container references for keyboard navigation
-    
+
     # Filter and pagination state
     category_filter = None  # Currently selected category (None = "Todos")
     current_page = 1  # Current page number
@@ -87,8 +93,8 @@ def search(page: ft.Page, is_dark_mode: bool = False):
         else:
             return 4
 
-    def execute_search():
-        """Execute the search action with current query and filters."""
+    async def execute_search():
+        """Execute the search action with current query and filters asynchronously."""
         nonlocal search_query, filtered_posts, is_loading, photo_grid, current_page, has_more, total_posts, photo_containers, selected_photo_index
 
         # Reset pagination when search/filter changes
@@ -103,53 +109,42 @@ def search(page: ft.Page, is_dark_mode: bool = False):
             photo_grid = build_photo_grid()
             update_grid_in_content()
 
-        print(f"Executing search for: '{search_query}' with filter: {category_filter}")  # Debug
+        # Simulate API call delay (remove in production)
+        await asyncio.sleep(0.8)
 
-        # Simulate async API call with delay (remove in production)
-        import threading
+        # Get paginated posts with search query and category filter
+        result = get_paginated_posts(
+            page=current_page,
+            page_size=page_size,
+            search_query=search_query.strip() if search_query.strip() else None,
+            category_filter=category_filter,
+        )
 
-        def finish_search():
-            nonlocal is_loading, filtered_posts, photo_grid, has_more, total_posts
+        # Update state from pagination result
+        filtered_posts = result["posts"]
+        has_more = result["has_more"]
+        total_posts = result["total"]
 
-            # Get paginated posts with search query and category filter
-            result = get_paginated_posts(
-                page=current_page,
-                page_size=page_size,
-                search_query=search_query.strip() if search_query.strip() else None,
-                category_filter=category_filter,
-            )
-
-            # Update state from pagination result
-            filtered_posts = result["posts"]
-            has_more = result["has_more"]
-            total_posts = result["total"]
-
-            # Clear loading state
-            is_loading = False
-            if photo_grid:
-                photo_grid = build_photo_grid()
-                update_grid_in_content()
-
-        # Simulate 800ms loading delay for UX demonstration
-        threading.Timer(0.8, finish_search).start()
-
-        # Future: Replace with actual API call
-        # filtered_posts = await api_client.search_posts(query=search_query)
+        # Clear loading state
+        is_loading = False
+        if photo_grid:
+            photo_grid = build_photo_grid()
+            update_grid_in_content()
 
     # on_search_change and on_clear_click are defined later (after buttons are created)
 
-    def on_search_click(e):
+    def on_search_click(_e):
         """Trigger search when magnifying glass icon is clicked."""
-        execute_search()
+        page.run_task(execute_search)
 
     def on_key_press(e):
         """Handle keyboard shortcuts and grid navigation."""
         nonlocal search_query, search_field, selected_photo_index, filtered_posts
-        
+
         # Search field shortcuts (when not navigating grid)
         if selected_photo_index == -1:
             if e.key == "Enter":
-                execute_search()
+                page.run_task(execute_search)
             elif e.key == "Escape":
                 on_clear_click(e)
             elif e.key == "Tab" and not is_loading and filtered_posts:
@@ -161,7 +156,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
             # Grid navigation (when a photo is focused)
             columns = get_responsive_columns()
             total_photos = len(filtered_posts)
-            
+
             if e.key == "Arrow Right":
                 # Move right
                 if selected_photo_index < total_photos - 1:
@@ -197,16 +192,14 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                 # Escape: exit grid navigation
                 selected_photo_index = -1
                 update_photo_focus()
-                if search_field:
-                    search_field.focus()
 
     # External clear button will be created later and its disabled state updated dynamically
 
     # Define handlers before field/button creation so they can be referenced
-    def on_search_change(e):
+    def on_search_change(search_e):
         """Handle search input changes with debouncing and clear button state."""
         nonlocal search_query, debounce_timer, search_field, clear_btn
-        search_query = e.control.value.lower()
+        search_query = search_e.control.value.lower()
 
         # Enable or disable clear button based on current text
         if clear_btn is not None:
@@ -220,26 +213,28 @@ def search(page: ft.Page, is_dark_mode: bool = False):
         # Set new timer for debounced search (300ms delay)
         import threading
 
-        debounce_timer = threading.Timer(0.3, execute_search)
+        def trigger_search():
+            """Schedule async search task on Flet's event loop."""
+            page.run_task(execute_search)
+
+        debounce_timer = threading.Timer(0.3, trigger_search)
         debounce_timer.start()
 
-    def on_clear_click(e):
+    def on_clear_click(_e):
         """Clear the search field and disable clear button."""
         nonlocal search_query, search_field, clear_btn
         search_query = ""
         if search_field:
             search_field.value = ""
             search_field.update()
-            search_field.focus()
         if clear_btn:
             clear_btn.disabled = True
             clear_btn.update()
 
-    def on_photo_click(e):
+    def on_photo_click(photo_e):
         """Handle photo click - open post detail modal."""
-        post_index = e.control.data
+        post_index = photo_e.control.data
         post = filtered_posts[post_index]
-        print(f"Opening post detail: {post['post_title']}")  # Debug
 
         # Open post detail dialog with full post information
         open_post_detail_dialog(
@@ -252,11 +247,11 @@ def search(page: ft.Page, is_dark_mode: bool = False):
         """Handle hover state changes for photo containers with scale and shadow effects."""
         container = e.control
         idx = container.data
-        
+
         # Don't apply hover effect if this photo is keyboard-focused
         if idx == selected_photo_index:
             return
-            
+
         if e.data == "true":  # Mouse entered
             container.scale = AppTheme.PHOTO_HOVER_SCALE
             container.shadow = ft.BoxShadow(
@@ -278,11 +273,11 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                 offset=ft.Offset(0, 0),
             )
         container.update()
-    
+
     def update_photo_focus():
         """Update visual focus indicator for keyboard navigation."""
         nonlocal photo_containers, selected_photo_index
-        
+
         # Reset all containers to default state
         for i, container in enumerate(photo_containers):
             if i == selected_photo_index:
@@ -295,8 +290,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     offset=ft.Offset(0, AppTheme.PHOTO_HOVER_SHADOW_OFFSET_Y),
                 )
                 container.border = ft.border.all(
-                    AppTheme.BORDER_WIDTH_STANDARD,
-                    AppTheme.PRIMARY_GREEN
+                    AppTheme.BORDER_WIDTH_STANDARD, AppTheme.PRIMARY_GREEN
                 )
             else:
                 # Reset to default
@@ -309,7 +303,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                 )
                 container.border = None
             container.update()
-        
+
         page.update()
 
     # Search field with floating label (consistent with login page inputs)
@@ -320,7 +314,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
         is_dark_mode=is_dark_mode,
         expand=1,  # Fill remaining horizontal space inside Row
         on_change=on_search_change,
-        on_submit=lambda e: execute_search(),  # Enter key support
+        on_submit=lambda _e: page.run_task(execute_search),  # Enter key support
         autofocus=False,
     )
 
@@ -350,33 +344,33 @@ def search(page: ft.Page, is_dark_mode: bool = False):
     # Filter chips handlers
     def on_filter_click(category: str | None):
         """Handle filter chip click to filter posts by category.
-        
+
         Parameters
         ----------
         category : str | None
             Category to filter by. None means "Todos" (all categories).
         """
         nonlocal category_filter, current_page, filtered_posts, photo_containers, selected_photo_index
-        
+
         # Update selected filter
         category_filter = category
-        
+
         # Reset pagination
         current_page = 1
         filtered_posts = []
         photo_containers = []
         selected_photo_index = -1
-        
+
         # Rebuild filter chips to update visual state
         filter_chips_row.controls = build_filter_chips()
         filter_chips_row.update()
-        
+
         # Execute search with new filter
-        execute_search()
-    
+        page.run_task(execute_search)
+
     def build_filter_chips():
         """Build filter chips UI with "Todos" + category chips.
-        
+
         Returns
         -------
         list[ft.Control]
@@ -384,7 +378,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
         """
         categories = get_unique_categories()
         chips = []
-        
+
         # "Todos" chip (always first)
         is_selected = category_filter is None
         chips.append(
@@ -393,8 +387,14 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     "Todos",
                     size=AppTheme.FONT_SIZE_SMALL,
                     weight=ft.FontWeight.W_500 if is_selected else ft.FontWeight.W_400,
-                    color="#FFFFFF" if is_selected else (
-                        AppTheme.DARK_TEXT_PRIMARY if is_dark_mode else AppTheme.LIGHT_TEXT_PRIMARY
+                    color=(
+                        "#FFFFFF"
+                        if is_selected
+                        else (
+                            AppTheme.DARK_TEXT_PRIMARY
+                            if is_dark_mode
+                            else AppTheme.LIGHT_TEXT_PRIMARY
+                        )
                     ),
                 ),
                 padding=ft.padding.symmetric(
@@ -402,8 +402,14 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     vertical=AppTheme.TAG_PADDING_VERTICAL,
                 ),
                 border_radius=ft.border_radius.all(100),
-                bgcolor=AppTheme.PRIMARY_GREEN if is_selected else (
-                    AppTheme.DARK_SURFACE_VARIANT if is_dark_mode else AppTheme.LIGHT_SURFACE_VARIANT
+                bgcolor=(
+                    AppTheme.PRIMARY_GREEN
+                    if is_selected
+                    else (
+                        AppTheme.DARK_SURFACE_VARIANT
+                        if is_dark_mode
+                        else AppTheme.LIGHT_SURFACE_VARIANT
+                    )
                 ),
                 border=ft.border.all(
                     2,
@@ -413,7 +419,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                 ink=True,
             )
         )
-        
+
         # Category chips
         for category in categories:
             is_selected = category_filter == category
@@ -422,9 +428,17 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     ft.Text(
                         category.capitalize(),
                         size=AppTheme.FONT_SIZE_SMALL,
-                        weight=ft.FontWeight.W_500 if is_selected else ft.FontWeight.W_400,
-                        color="#FFFFFF" if is_selected else (
-                            AppTheme.DARK_TEXT_PRIMARY if is_dark_mode else AppTheme.LIGHT_TEXT_PRIMARY
+                        weight=(
+                            ft.FontWeight.W_500 if is_selected else ft.FontWeight.W_400
+                        ),
+                        color=(
+                            "#FFFFFF"
+                            if is_selected
+                            else (
+                                AppTheme.DARK_TEXT_PRIMARY
+                                if is_dark_mode
+                                else AppTheme.LIGHT_TEXT_PRIMARY
+                            )
                         ),
                     ),
                     padding=ft.padding.symmetric(
@@ -432,8 +446,14 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                         vertical=AppTheme.TAG_PADDING_VERTICAL,
                     ),
                     border_radius=ft.border_radius.all(100),
-                    bgcolor=AppTheme.PRIMARY_GREEN if is_selected else (
-                        AppTheme.DARK_SURFACE_VARIANT if is_dark_mode else AppTheme.LIGHT_SURFACE_VARIANT
+                    bgcolor=(
+                        AppTheme.PRIMARY_GREEN
+                        if is_selected
+                        else (
+                            AppTheme.DARK_SURFACE_VARIANT
+                            if is_dark_mode
+                            else AppTheme.LIGHT_SURFACE_VARIANT
+                        )
                     ),
                     border=ft.border.all(
                         2,
@@ -443,9 +463,9 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     ink=True,
                 )
             )
-        
+
         return chips
-    
+
     # Initialize filter chips row (will be populated after content_container creation)
     filter_chips_row = ft.Row(
         controls=[],
@@ -458,18 +478,18 @@ def search(page: ft.Page, is_dark_mode: bool = False):
     async def load_more_posts():
         """Load next page of posts and append to current results."""
         nonlocal current_page, filtered_posts, has_more, is_loading_more, photo_grid, total_posts
-        
+
         if is_loading_more or not has_more:
             return
-        
+
         # Set loading state
         is_loading_more = True
         photo_grid = build_photo_grid()
         update_grid_in_content()
-        
+
         # Simulate API delay
         await asyncio.sleep(0.8)
-        
+
         # Load next page
         current_page += 1
         result = get_paginated_posts(
@@ -478,12 +498,12 @@ def search(page: ft.Page, is_dark_mode: bool = False):
             search_query=search_query.strip() if search_query.strip() else None,
             category_filter=category_filter,
         )
-        
+
         # Append new posts to existing results
         filtered_posts.extend(result["posts"])
         has_more = result["has_more"]
         total_posts = result["total"]
-        
+
         is_loading_more = False
         photo_grid = build_photo_grid()
         update_grid_in_content()
@@ -520,7 +540,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 expand=True,
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
             )
 
         # Empty state: no results found
@@ -564,27 +584,27 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 expand=True,
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
             )
 
         # Content state: build grid with filtered posts
         photo_items = []
         photo_containers.clear()  # Reset containers list for keyboard navigation
-        
+
         for idx, post in enumerate(filtered_posts):
             if post.get("image_path"):
                 # Create accessible description for screen readers
                 post_title = post.get("post_title", "Publicação")
                 author_name = post.get("author_name", "Usuário")
                 alt_text = f"{post_title} por {author_name}"
-                
+
                 # Create image container with tap handler
                 # Lazy loading: Images load when GridView renders them (Flet's default behavior)
                 # Caching: Set gapless_playback=True for smooth re-rendering
                 container = ft.Container(
                     content=ft.Image(
                         src=post["image_path"],
-                        fit=ft.ImageFit.COVER,
+                        fit=ft.BoxFit.COVER,
                         border_radius=ft.border_radius.all(AppTheme.SPACING_XS),
                         gapless_playback=True,  # Enable image caching
                         tooltip=alt_text,  # Hover tooltip for accessibility
@@ -621,9 +641,11 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                         offset=ft.Offset(0, 0),
                     ),
                 )
-                
+
                 photo_items.append(container)
-                photo_containers.append(container)  # Store reference for keyboard navigation
+                photo_containers.append(
+                    container
+                )  # Store reference for keyboard navigation
 
         # Grid view for photos with responsive columns
         columns = get_responsive_columns()
@@ -637,7 +659,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
             padding=0,
             child_aspect_ratio=1.0,  # Keep items square
         )
-        
+
         # Build Load More button (only if there are more posts)
         load_more_controls = []
         if has_more and filtered_posts:
@@ -646,7 +668,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                     [
                         ft.ProgressRing(
                             width=AppTheme.ICON_SIZE_MD,
-                            height=AppTheme.ICON_SIZE_MDpython3 run_,
+                            height=AppTheme.ICON_SIZE_MD,
                             stroke_width=2,
                             color=AppTheme.PRIMARY_GREEN,
                             visible=is_loading_more,
@@ -655,8 +677,14 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                             "Carregando..." if is_loading_more else "Carregar mais",
                             size=AppTheme.FONT_SIZE_BODY,
                             weight=AppTheme.FONT_WEIGHT_MEDIUM,
-                            color=AppTheme.PRIMARY_GREEN if not is_loading_more else (
-                                AppTheme.DARK_TEXT_SECONDARY if is_dark_mode else AppTheme.LIGHT_TEXT_SECONDARY
+                            color=(
+                                AppTheme.PRIMARY_GREEN
+                                if not is_loading_more
+                                else (
+                                    AppTheme.DARK_TEXT_SECONDARY
+                                    if is_dark_mode
+                                    else AppTheme.LIGHT_TEXT_SECONDARY
+                                )
                             ),
                         ),
                     ],
@@ -668,20 +696,21 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                 border=ft.border.all(1, AppTheme.PRIMARY_GREEN),
                 bgcolor="transparent",
                 ink=True,
-                on_click=lambda e: page.run_task(load_more_posts) if not is_loading_more else None,
+                on_click=lambda _e: (page.run_task(load_more_posts) if not is_loading_more else None),  # type: ignore
             )
             load_more_controls = [
                 ft.Container(height=AppTheme.SPACING_MD),
                 ft.Container(
                     content=load_more_btn,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=AppTheme.SPACING_MD),
             ]
-        
+
         # Wrap grid + load more button in a column
+        all_controls: list[ft.Control] = [grid_view] + load_more_controls  # type: ignore
         photo_grid = ft.Column(
-            controls=[grid_view] + load_more_controls,
+            controls=all_controls,
             spacing=0,
             expand=True,
         )
@@ -698,14 +727,16 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                 column.controls[-1] = photo_grid
                 page.update()
 
-    def on_page_resize(e):
+    def on_page_resize(_e):
         """Handle window resize to update grid columns."""
         nonlocal photo_grid, content_container
         changed = False
         # photo_grid is now a Column containing GridView + Load More button
         if photo_grid and isinstance(photo_grid, ft.Column):
             # Get the GridView (first child)
-            if len(photo_grid.controls) > 0 and isinstance(photo_grid.controls[0], ft.GridView):
+            if len(photo_grid.controls) > 0 and isinstance(
+                photo_grid.controls[0], ft.GridView
+            ):
                 grid_view = photo_grid.controls[0]
                 ww = get_window_width()
                 new_columns = get_responsive_columns(ww)
@@ -722,7 +753,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
             page.update()
 
     # Register resize handler
-    page.on_resized = on_page_resize
+    page.on_resize = on_page_resize
 
     # Register keyboard handler for shortcuts (Esc to clear)
     page.on_keyboard_event = on_key_press
@@ -788,7 +819,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
                 ft.Container(
                     content=content_container,
                     expand=True,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 nav,
             ],
@@ -798,7 +829,7 @@ def search(page: ft.Page, is_dark_mode: bool = False):
     )
 
     # Load initial data
-    execute_search()
+    page.run_task(execute_search)
 
 
 if __name__ == "__main__":

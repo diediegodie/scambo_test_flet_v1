@@ -84,7 +84,7 @@ def create_nav_bar(
                         horizontal=AppTheme.BADGE_PADDING_HORIZONTAL,
                         vertical=AppTheme.BADGE_PADDING_VERTICAL,
                     ),
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                     top=0,
                     right=0,
                 )

@@ -211,13 +211,13 @@ def open_notification_detail_dialog(
             responsive_image_width = dialog_width - (
                 AppTheme.DIALOG_CONTENT_PADDING * 2
             )
-            related_widgets.append(
+                    related_widgets.append(
                 ft.Container(
                     content=ft.Image(
                         src=related_image,
                         width=responsive_image_width,
                         height=AppTheme.DIALOG_RELATED_IMAGE_HEIGHT,
-                        fit=ft.ImageFit.COVER,
+                        fit=ft.BoxFit.COVER,
                         border_radius=ft.border_radius.all(AppTheme.CARD_BORDER_RADIUS),
                     ),
                     padding=ft.padding.only(

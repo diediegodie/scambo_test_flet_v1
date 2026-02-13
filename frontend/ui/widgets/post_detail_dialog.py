@@ -58,9 +58,20 @@ def open_post_detail_dialog(
 
     def close_dialog(_):
         """Close dialog handler."""
-        dialog.open = False
-        page.update()
-        page.on_keyboard_event = previous_keyboard_handler
+        try:
+            _ = dialog.page
+        except RuntimeError:
+            pass
+        else:
+            dialog.open = False
+            try:
+                page.update()
+            except Exception:
+                pass
+        try:
+            page.on_keyboard_event = previous_keyboard_handler
+        except Exception:
+            pass
 
     # Author section with avatar
     author_avatar = ft.CircleAvatar(
@@ -285,9 +296,20 @@ def open_post_detail_dialog(
 
     def _escape_handler(e: ft.KeyboardEvent):
         if e.key == "Escape":
-            dialog.open = False
-            page.update()
-            page.on_keyboard_event = previous_keyboard_handler
+            try:
+                _ = dialog.page
+            except RuntimeError:
+                pass
+            else:
+                dialog.open = False
+                try:
+                    page.update()
+                except Exception:
+                    pass
+            try:
+                page.on_keyboard_event = previous_keyboard_handler
+            except Exception:
+                pass
         elif previous_keyboard_handler:
             previous_keyboard_handler(e)
 

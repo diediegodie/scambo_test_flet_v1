@@ -26,10 +26,22 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
     content_max_height = 400
 
     def close_dialog(_):
-        dialog.open = False
-        page.update()
+        try:
+            _ = dialog.page
+        except RuntimeError:
+            # Dialog not attached; nothing to close
+            pass
+        else:
+            dialog.open = False
+            try:
+                page.update()
+            except Exception:
+                pass
         # Restore previous keyboard handler if any
-        page.on_keyboard_event = previous_keyboard_handler
+        try:
+            page.on_keyboard_event = previous_keyboard_handler
+        except Exception:
+            pass
 
     def add_photos_placeholder(_):
         # Placeholder for future photo upload functionality
@@ -150,12 +162,20 @@ def open_new_post_dialog(page: ft.Page, is_dark_mode: bool = False):
 
     def _escape_handler(e: ft.KeyboardEvent):
         if e.key == "Escape":
-            dialog.open = False
-            page.update()
-            page.on_keyboard_event = previous_keyboard_handler
-        elif previous_keyboard_handler:
-            # Delegate to previous handler for other keys
-            previous_keyboard_handler(e)
+            try:
+                _ = dialog.page
+            except RuntimeError:
+                pass
+            else:
+                dialog.open = False
+                try:
+                    page.update()
+                except Exception:
+                    pass
+            try:
+                page.on_keyboard_event = previous_keyboard_handler
+            except Exception:
+                pass
 
     page.on_keyboard_event = _escape_handler
     page.update()

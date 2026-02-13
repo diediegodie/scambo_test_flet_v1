@@ -79,9 +79,20 @@ def open_notification_detail_dialog(
 
     def close_dialog(_):
         """Close dialog handler."""
-        dialog.open = False
-        page.update()
-        page.on_keyboard_event = previous_keyboard_handler
+        try:
+            _ = dialog.page
+        except RuntimeError:
+            pass
+        else:
+            dialog.open = False
+            try:
+                page.update()
+            except Exception:
+                pass
+        try:
+            page.on_keyboard_event = previous_keyboard_handler
+        except Exception:
+            pass
 
     def mark_as_read_handler(_):
         """Mark notification as read and close dialog."""
@@ -97,8 +108,16 @@ def open_notification_detail_dialog(
         import time
 
         time.sleep(0.5)
-        dialog.open = False
-        page.update()
+        try:
+            _ = dialog.page
+        except RuntimeError:
+            pass
+        else:
+            dialog.open = False
+            try:
+                page.update()
+            except Exception:
+                pass
 
     # Build sender section
     sender_section = None
@@ -327,9 +346,20 @@ def open_notification_detail_dialog(
     def _escape_handler(e: ft.KeyboardEvent):
         """Handle Escape key to close dialog."""
         if e.key == "Escape":
-            dialog.open = False
-            page.update()
-            page.on_keyboard_event = previous_keyboard_handler
+            try:
+                _ = dialog.page
+            except RuntimeError:
+                pass
+            else:
+                dialog.open = False
+                try:
+                    page.update()
+                except Exception:
+                    pass
+            try:
+                page.on_keyboard_event = previous_keyboard_handler
+            except Exception:
+                pass
 
     page.on_keyboard_event = _escape_handler
     page.update()

@@ -16,15 +16,11 @@ A social network platform for secure bartering and trading of goods and services
 - [About](#about)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Project Status](#project-status)
-- [Installation](#installation)
-- [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Development](#development)
-- [Roadmap](#roadmap)
 - [Architecture](#architecture)
-- [Contributing](#contributing)
 - [License](#license)
+- [Contact](#contact)
 
 ---
 

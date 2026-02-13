@@ -1,4 +1,4 @@
-# 🔄 SCAMBO
+# SCAMBO
 
 **Safe Exchanges Between People**
 
@@ -50,7 +50,7 @@ Anyone who wants to make exchanges without using money, whether physical objects
 
 ## Features
 
-### Current Features (Frontend Complete)
+### Current Features
 
 #### Core Pages
 - **Landing Page** - Welcome screen with logo and call-to-action buttons
@@ -75,128 +75,25 @@ Anyone who wants to make exchanges without using money, whether physical objects
 - **Zero Hardcoded Values** - All styling centralized in theme system
 - **Clean Architecture** - Clear separation of concerns (UI/Widgets/Data)
 
-### Coming Soon (Backend Integration)
-
-- User authentication with JWT
-- Real-time data from API
-- Post creation and management
-- Comment system
-- Trade proposals
-- Notification system
-- User reputation system
-
 ---
 
 ## Tech Stack
 
 ### Frontend
-- **[Flet](https://flet.dev/)** - Python framework for building multi-platform UIs
-- **Python 3.11+** - Modern Python with type hints
+- **[Flet](https://flet.dev/)**
+- **Python 3.11+**
 
 ### Backend (Planned)
-- **[FastAPI](https://fastapi.tiangolo.com/)** - Modern, fast web framework for APIs
-- **[SQLAlchemy](https://www.sqlalchemy.org/)** - SQL toolkit and ORM
-- **[Alembic](https://alembic.sqlalchemy.org/)** - Database migration tool
-- **[PostgreSQL](https://www.postgresql.org/)** - Robust relational database
+- **[FastAPI](https://fastapi.tiangolo.com/)**
+- **[SQLAlchemy](https://www.sqlalchemy.org/)**
+- **[Alembic](https://alembic.sqlalchemy.org/)**
+- **[PostgreSQL](https://www.postgresql.org/)**
 
 ### Development Tools
 - **Black** - Code formatting
 - **Flake8** - Style checking
 - **Mypy** - Type checking
 - **Pytest** - Testing framework
-
----
-
-## Project Status
-
-### Completed
-- **Frontend**: 100% complete with all pages and features
-- **Design System**: Centralized theme with 86+ constants
-- **Mock Data**: Complete data layer for all features
-- **Documentation**: Comprehensive guides and technical docs
-- **Code Quality**: Zero hardcoded values, 100% theme compliance
-
-### In Progress
-- Backend API development (FastAPI + PostgreSQL)
-
-### Planned
-- Authentication system
-- Database models and migrations
-- API endpoints for all features
-- Integration with frontend
-- Production deployment
-
----
-
-## Installation
-
-### Prerequisites
-
-- Python 3.11 or higher
-- pip (Python package manager)
-- Virtual environment (recommended)
-
-### Setup Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/diediegodie/scambo_test_flet_v1.git
-   cd scambo_test_flet_v1
-   ```
-
-2. **Create a virtual environment**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Install development tools (optional)**
-   ```bash
-   pip install black flake8 mypy pytest
-   ```
-
----
-
-## Usage
-
-### Running the Application
-
-**Standard method:**
-```bash
-python3 run_app.py
-```
-
-**Using Flet CLI (for mobile development):**
-```bash
-flet run --android  # For Android
-flet run --ios      # For iOS
-```
-
-**Alternative entry point:**
-```bash
-python3 main.py
-```
-
-### Theme Configuration
-
-To launch the app in dark mode:
-1. Open `run_app.py`
-2. Change `is_dark_mode = False` to `is_dark_mode = True`
-3. Run the application
-
-Theme preferences are automatically saved in client storage and persist across sessions.
-
-### Development Mode
-
-For development with hot reload:
-```bash
-flet run --web run_app.py
-```
 
 ---
 
@@ -222,7 +119,9 @@ scambo_test_flet_v1/
 │       │   ├── notification_card.py # Notification item
 │       │   ├── new_post_dialog.py   # Create post modal
 │       │   ├── post_detail_dialog.py     # Post detail modal
-│       │   └── notification_detail_dialog.py  # Notification detail
+│       │   └── notification_detail_dialog.py  # Notification detail modal
+│       ├── state/         # (Reserved for future state management)
+│       ├── utils/         # (Reserved for future utilities)
 │       └── theme.py       # Centralized design system (86+ constants)
 │
 ├── backend/               # Backend code (FastAPI) - Structure ready
@@ -243,7 +142,16 @@ scambo_test_flet_v1/
 │   ├── project_overview.md        # Project summary
 │   ├── memorie.md                 # Development history
 │   ├── VERIFICATION_REPORT.md     # Code audit report
-│   └── initial docs/              # Technical specs
+│   ├── initial docs/              # Technical specifications
+│   │   ├── api_flows.md          # API flow diagrams
+│   │   ├── app_summary.md        # App overview
+│   │   ├── onboarding.md         # Onboarding flow
+│   │   ├── security_.md          # Security guidelines
+│   │   ├── technical_requirements.md
+│   │   └── technical_tickets_roadmap.md
+│   └── ui/                        # UI documentation
+│       ├── filter_and_pagination_implementation.md
+│       └── theme_consistency_report.md
 │
 ├── tests/                # Test suite
 │   ├── test_navigation.py
@@ -252,17 +160,22 @@ scambo_test_flet_v1/
 │
 ├── main.py               # Entry point (Flet CLI)
 ├── run_app.py            # Main entry point
-└── requirements.txt      # Python dependencies
+├── requirements.txt      # Python dependencies
+└── storage/              # Persistent storage (data/temp)
 ```
 
 ### Key Directories Explained
 
-- **`frontend/ui/pages/`** - All page modules (landing, auth, dashboard, etc.)
-- **`frontend/ui/widgets/`** - Reusable UI components
-- **`frontend/ui/theme.py`** - Single source of truth for all styling
-- **`mock/`** - Mock data providers with API-ready structure
-- **`backend/`** - Backend structure (scaffolded, awaiting implementation)
-- **`docs/`** - Comprehensive project documentation
+- **`frontend/ui/pages/`** - All page modules (8 pages: landing, auth, dashboard, profile, search, notifications, settings)
+- **`frontend/ui/widgets/`** - Reusable UI components (nav bar, post card, dialogs, etc.)
+- **`frontend/ui/state/`** - Reserved for future state management (currently empty)
+- **`frontend/ui/utils/`** - Reserved for future utility functions (currently empty)
+- **`frontend/ui/theme.py`** - Single source of truth for all styling (86+ design tokens)
+- **`backend/`** - Backend structure (FastAPI + SQLAlchemy, scaffolded and ready for implementation)
+- **`mock/`** - Mock data providers with API-ready structure (posts, users, comments, notifications)
+- **`docs/`** - Comprehensive project documentation including technical specs and UI reports
+- **`storage/`** - Persistent data storage (data/ for files, temp/ for temporary data)
+- **`tests/`** - Test suite with navigation, dialog, and profile tests
 
 ---
 
@@ -368,33 +281,11 @@ This project follows strict development rules to maintain code quality and consi
 └─────────────────────────────────────────┘
 ```
 
-### Data Flow
-
-**Current (Mock Data):**
-```
-Page → Mock Provider → Dict[str, Any] → UI Component
-```
-
-**Future (API Integration):**
-```
-Page → API Client → FastAPI Endpoint → Service → Model → Database
-                                                    ↓
-Page ← Pydantic Schema ← API Response ← Service ← Model
-```
-
 ---
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Acknowledgments
-
-- **[Flet Team](https://flet.dev/)** - For the amazing Python UI framework
-- **[FastAPI](https://fastapi.tiangolo.com/)** - For the modern web framework
-- **Community Contributors** - For feedback and support
 
 ---
 
@@ -404,16 +295,3 @@ For questions, suggestions, or support:
 
 - **Project Repository:** [GitHub](https://github.com/diediegodie/scambo_test_flet_v1)
 - **Issues:** [Issue Tracker](https://github.com/diediegodie/scambo_test_flet_v1/issues)
-
----
-
-## Project Stats
-
-- **Total Files:** 50+
-- **Lines of Code:** ~6,000+
-- **UI Pages:** 8
-- **Reusable Widgets:** 7
-- **Theme Constants:** 86+
-- **Mock Data Providers:** 4
-- **Test Coverage:** In Progress
-- **Documentation Pages:** 10+

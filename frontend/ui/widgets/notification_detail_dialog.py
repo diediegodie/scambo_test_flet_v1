@@ -211,7 +211,7 @@ def open_notification_detail_dialog(
             responsive_image_width = dialog_width - (
                 AppTheme.DIALOG_CONTENT_PADDING * 2
             )
-                    related_widgets.append(
+            related_widgets.append(
                 ft.Container(
                     content=ft.Image(
                         src=related_image,
@@ -325,12 +325,11 @@ def open_notification_detail_dialog(
     previous_keyboard_handler = page.on_keyboard_event
 
     def _escape_handler(e: ft.KeyboardEvent):
+        """Handle Escape key to close dialog."""
         if e.key == "Escape":
             dialog.open = False
             page.update()
             page.on_keyboard_event = previous_keyboard_handler
-        elif previous_keyboard_handler:
-            previous_keyboard_handler(e)
 
     page.on_keyboard_event = _escape_handler
     page.update()

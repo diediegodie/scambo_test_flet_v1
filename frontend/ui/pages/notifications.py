@@ -240,8 +240,17 @@ def notifications(page: ft.Page, is_dark_mode: bool = False):
 
         # Update list view
         notifications_list.controls = notification_cards
-        # Only update if list is already on page
-        if notifications_list.page:
+
+        # Only call update if the control is already attached to a page.
+        # Accessing `control.page` raises RuntimeError when the control is not
+        # added, so guard with try/except to avoid the 'Control must be added'
+        # runtime error during initial build before `page.add()` is called.
+        try:
+            _ = notifications_list.page
+        except RuntimeError:
+            # Not yet attached to page; skip update for now.
+            pass
+        else:
             notifications_list.update()
 
     # Page header with title and actions

@@ -103,24 +103,24 @@ scambo_test_flet_v1/
 │       ├── pages/         # Page modules (8 pages)
 │       │   ├── index.py              # Landing page
 │       │   ├── login.py              # Login page
-│       │   ├── create_account.py    # Registration
-│       │   ├── dashboard.py         # Main feed
-│       │   ├── perfil.py            # Profile page
-│       │   ├── search.py            # Search/explore
-│       │   ├── notifications.py     # Notifications
-│       │   └── configurations.py    # Settings
+│       │   ├── create_account.py     # Registration
+│       │   ├── dashboard.py          # Main feed
+│       │   ├── perfil.py             # Profile page
+│       │   ├── search.py             # Search/explore
+│       │   ├── notifications.py      # Notifications
+│       │   └── configurations.py     # Settings
 │       ├── widgets/       # Reusable components (7 widgets)
-│       │   ├── nav_bar.py           # Bottom navigation
-│       │   ├── post_card.py         # Post feed item
-│       │   ├── notification_card.py # Notification item
-│       │   ├── new_post_dialog.py   # Create post modal
+│       │   ├── nav_bar.py            # Bottom navigation
+│       │   ├── post_card.py          # Post feed item
+│       │   ├── notification_card.py   # Notification item
+│       │   ├── new_post_dialog.py     # Create post modal
 │       │   ├── post_detail_dialog.py     # Post detail modal
 │       │   └── notification_detail_dialog.py  # Notification detail modal
 │       ├── state/         # (Reserved for future state management)
 │       ├── utils/         # (Reserved for future utilities)
 │       └── theme.py       # Centralized design system (86+ constants)
 │
-├── backend/               # Backend code (FastAPI) - Structure ready
+├── backend/              # Backend code (FastAPI) - Structure ready
 │   ├── api/              # API routes
 │   ├── core/             # Config, security, dependencies
 │   ├── db/               # Database connection
@@ -139,10 +139,10 @@ scambo_test_flet_v1/
 │   ├── memorie.md                 # Development history
 │   ├── VERIFICATION_REPORT.md     # Code audit report
 │   ├── initial docs/              # Technical specifications
-│   │   ├── api_flows.md          # API flow diagrams
-│   │   ├── app_summary.md        # App overview
-│   │   ├── onboarding.md         # Onboarding flow
-│   │   ├── security_.md          # Security guidelines
+│   │   ├── api_flows.md           # API flow diagrams
+│   │   ├── app_summary.md         # App overview
+│   │   ├── onboarding.md          # Onboarding flow
+│   │   ├── security_.md           # Security guidelines
 │   │   ├── technical_requirements.md
 │   │   └── technical_tickets_roadmap.md
 │   └── ui/                        # UI documentation
@@ -198,96 +198,51 @@ This project follows strict development rules to maintain code quality and consi
 
 **Pattern:** Component-based with centralized theming
 
-```
-┌─────────────────────────────────────────┐
-│           Entry Point (run_app.py)      │
-│    - Theme initialization               │
-│    - Client storage setup               │
-└───────────────┬─────────────────────────┘
-                │
-                ▼
-┌─────────────────────────────────────────┐
-│            Pages Layer                  │
-│  - index.py (Landing)                   │
-│  - login.py / create_account.py         │
-│  - dashboard.py (Main feed)             │
-│  - perfil.py (Profile)                  │
-│  - search.py (Explore)                  │
-│  - notifications.py                     │
-│  - configurations.py (Settings)         │
-└───────────────┬─────────────────────────┘
-                │
-                ▼
-┌─────────────────────────────────────────┐
-│          Widgets Layer                  │
-│  - PostCard (Feed item)                 │
-│  - NotificationCard (Notification item) │
-│  - NavigationBar (Bottom nav)           │
-│  - Dialogs (Modals)                     │
-└───────────────┬─────────────────────────┘
-                │
-                ▼
-┌─────────────────────────────────────────┐
-│         Theme System (theme.py)         │
-│  - 86+ centralized constants            │
-│  - Dark/Light mode definitions          │
-│  - Helper functions                     │
-└─────────────────────────────────────────┘
-                │
-                ▼
-┌─────────────────────────────────────────┐
-│        Mock Data Layer (mock/)          │
-│  - posts.py (Post data)                 │
-│  - user.py (User data)                  │
-│  - comments.py (Comment data)           │
-│  - notifications.py (Notification data) │
-└─────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A["Entry Point (run_app.py)
+    - Theme initialization
+    - Client storage setup"] --> B["Pages Layer
+    - index.py (Landing)
+    - login.py / create_account.py
+    - dashboard.py (Main feed)
+    - perfil.py (Profile)
+    - search.py (Explore)
+    - notifications.py
+    - configurations.py (Settings)"]
+    B --> C["Widgets Layer
+    - PostCard (Feed item)
+    - NotificationCard (Notification item)
+    - NavigationBar (Bottom nav)
+    - Dialogs (Modals)"]
+    C --> D["Theme System (theme.py)
+    - 86+ centralized constants
+    - Dark/Light mode definitions
+    - Helper functions"]
+    D --> E["Mock Data Layer (mock/)
+    - posts.py (Post data)
+    - user.py (User data)
+    - comments.py (Comment data)
+    - notifications.py (Notification data)"]
 ```
 
-### Backend Architecture (Planned)
+---
+
+## Backend Architecture (Planned)
 
 **Pattern:** Clean Architecture with FastAPI
 
+```mermaid
+flowchart TD
+    F["API Layer (api/)
+    - Route handlers
+    - Request/Response models"] --> G["Services Layer (services/)
+    - Business logic
+    - Data processing"]
+    G --> H["Models Layer (models/)
+    - SQLAlchemy models
+    - Database schema"]
+    H --> I["Database Layer (db/)
+    - Connection management
+    - Session handling"]
 ```
-┌─────────────────────────────────────────┐
-│          API Layer (api/)               │
-│  - Route handlers                       │
-│  - Request/Response models              │
-└───────────────┬─────────────────────────┘
-                │
-                ▼
-┌─────────────────────────────────────────┐
-│        Services Layer (services/)       │
-│  - Business logic                       │
-│  - Data processing                      │
-└───────────────┬─────────────────────────┘
-                │
-                ▼
-┌─────────────────────────────────────────┐
-│         Models Layer (models/)          │
-│  - SQLAlchemy models                    │
-│  - Database schema                      │
-└───────────────┬─────────────────────────┘
-                │
-                ▼
-┌─────────────────────────────────────────┐
-│        Database Layer (db/)             │
-│  - Connection management                │
-│  - Session handling                     │
-└─────────────────────────────────────────┘
-```
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Contact
-
-For questions, suggestions, or support:
-
-- **Project Repository:** [GitHub](https://github.com/diediegodie/scambo_test_flet_v1)
-- **Issues:** [Issue Tracker](https://github.com/diediegodie/scambo_test_flet_v1/issues)

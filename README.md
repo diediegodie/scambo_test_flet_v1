@@ -246,3 +246,29 @@ flowchart TD
     - Connection management
     - Session handling"]
 ```
+
+## Screenshots
+
+### Home
+![Home](img/home.png)
+
+### Feed
+![Feed](img/feed.png)
+
+### Notifications
+![Notifications](img/notifications.png)
+
+### Explore / Search
+![Explore](img/explore_search.png)
+
+### Create Account
+![Create Account](img/create_account.png)
+
+### Create Publication
+![Create Publication](img/create_pub.png)
+
+### Profile
+![Profile](img/perfil.png)
+
+### Configurations
+![Configurations](img/configs.png)

@@ -11,19 +11,6 @@ A social network platform for secure bartering and trading of goods and services
 
 ---
 
-## Table of Contents
-
-- [About](#about)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Development](#development)
-- [Architecture](#architecture)
-- [License](#license)
-- [Contact](#contact)
-
----
-
 ## About
 
 SCAMBO is an application that enables people to exchange products and services with each other in a safe and reliable way. Whether it's trading guitar lessons for English lessons, or a smartphone for a bicycle, SCAMBO provides a secure platform to make exchanges without the risk of being scammed.
